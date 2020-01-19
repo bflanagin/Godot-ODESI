@@ -1,0 +1,164 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://OpenSeed/NewAccount.gd" type="Script" id=1]
+[ext_resource path="res://OpenSeed/OpenSeed.png" type="Texture" id=2]
+
+[node name="NewAccount" type="Control"]
+margin_left = 350.0
+margin_top = 90.0
+margin_right = 700.0
+margin_bottom = 540.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 400, 450 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_clip_content = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -54.0
+margin_top = 170.0
+margin_right = 59.0
+margin_bottom = 184.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Create Account"
+align = 1
+valign = 1
+uppercase = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Username" type="LineEdit" parent="."]
+anchor_left = 0.1
+anchor_top = 0.54
+anchor_right = 0.9
+anchor_bottom = 0.59
+margin_left = 1.2
+margin_top = -2.22
+margin_right = 0.800018
+margin_bottom = 4.13
+grow_horizontal = 2
+grow_vertical = 2
+placeholder_text = "Username"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Email" type="LineEdit" parent="."]
+anchor_left = 0.1
+anchor_top = 0.65
+anchor_right = 0.9
+anchor_bottom = 0.65
+margin_left = 1.20001
+margin_top = -5.45
+margin_right = 1.20001
+margin_bottom = 18.55
+grow_horizontal = 2
+grow_vertical = 2
+placeholder_text = "Email"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Passphrase" type="LineEdit" parent="."]
+anchor_left = 0.1
+anchor_top = 0.65
+anchor_right = 0.9
+anchor_bottom = 0.65
+margin_left = 1.20001
+margin_top = 34.55
+margin_right = 1.20001
+margin_bottom = 58.55
+grow_horizontal = 2
+grow_vertical = 2
+secret = true
+placeholder_text = "Passphrase"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+self_modulate = Color( 1, 1, 1, 0.117647 )
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -71.5
+margin_top = 7.0
+margin_right = 889.5
+margin_bottom = 893.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_scale = Vector2( 0.15, 0.15 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Create" type="Button" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -109.0
+margin_top = -45.0
+margin_right = -14.0
+margin_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Create"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Cancel" type="Button" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 9.9049
+margin_top = -45.0
+margin_right = 104.905
+margin_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Cancel"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="notification" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.519
+margin_left = -97.0
+margin_top = 133.5
+margin_right = 96.0
+margin_bottom = 140.033
+align = 1
+valign = 1
+[connection signal="text_changed" from="Username" to="." method="_on_Username_text_changed"]
+[connection signal="text_changed" from="Email" to="." method="_on_Email_text_changed"]
+[connection signal="text_changed" from="Passphrase" to="." method="_on_Passphrase_text_changed"]
+[connection signal="pressed" from="Create" to="." method="_on_Create_pressed"]
+[connection signal="pressed" from="Cancel" to="." method="_on_Cancel_pressed"]

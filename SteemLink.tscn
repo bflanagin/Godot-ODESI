@@ -1,0 +1,281 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://OpenSeed/SteemLink.gd" type="Script" id=1]
+[ext_resource path="res://popup.tres" type="StyleBox" id=2]
+[ext_resource path="res://OpenSeed/OpenSeed.png" type="Texture" id=3]
+[ext_resource path="res://elements/Contact.tscn" type="PackedScene" id=4]
+
+[sub_resource type="Animation" id=1]
+resource_name = "account_found"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Username:rect_position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.0136317, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 52.5, 140 ), Vector2( 61, 150 ), Vector2( 52.5, 210 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("about:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("AccountView:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("AccountView:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.2, 0.8 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[node name="SteemLink" type="Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -298.149
+margin_top = -200.0
+margin_right = 332.851
+margin_bottom = 187.0
+rect_min_size = Vector2( 600, 300 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel2" type="Panel" parent="."]
+self_modulate = Color( 0.054902, 0.282353, 0, 0.47451 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 7.0
+margin_top = 9.0
+margin_right = 5.0
+margin_bottom = 5.0
+custom_styles/panel = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_clip_content = true
+custom_styles/panel = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+self_modulate = Color( 1, 1, 1, 0.0117647 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 3.0
+margin_top = 5.0
+margin_right = 3377.0
+margin_bottom = 1637.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_scale = Vector2( 0.15, 0.15 )
+texture = ExtResource( 3 )
+stretch_mode = 6
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator" type="HSeparator" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -292.0
+margin_top = 25.5404
+margin_right = 291.0
+margin_bottom = 29.5404
+
+[node name="Label" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -57.5
+margin_top = 10.0
+margin_right = 49.5
+margin_bottom = 24.0
+text = "Steem Account"
+align = 1
+valign = 1
+uppercase = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="about" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -239.0
+margin_top = 110.0
+margin_right = 229.0
+margin_bottom = 126.0
+text = "Please enter your steem account information below"
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Username" type="LineEdit" parent="."]
+anchor_left = 0.1
+anchor_top = 0.54
+anchor_right = 0.9
+anchor_bottom = 0.59
+margin_left = -7.50002
+margin_top = -22.0
+margin_right = -7.90002
+margin_bottom = -11.5
+placeholder_text = "Username"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Link" type="Button" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -79.3506
+margin_top = -41.1036
+margin_right = -10.3506
+margin_bottom = -4.10364
+text = "Link"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Cancel" type="Button" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 16.0519
+margin_top = -42.9543
+margin_right = 111.052
+margin_bottom = -5.95435
+text = "Cancel"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="notification" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.52
+margin_left = -110.0
+margin_top = 138.0
+margin_right = 113.0
+margin_bottom = 145.0
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="text_timeout" type="Timer" parent="."]
+
+[node name="AccountView" type="Control" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.166667 )
+anchor_right = 1.0
+margin_left = 7.0
+margin_top = 54.7378
+margin_right = -7.0
+margin_bottom = 193.738
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AccountView"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 10
+
+[node name="Contact" parent="AccountView/HBoxContainer" instance=ExtResource( 4 )]
+margin_right = 128.0
+margin_bottom = 139.0
+rect_min_size = Vector2( 128, 128 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AccountView/HBoxContainer"]
+margin_left = 138.0
+margin_right = 563.0
+margin_bottom = 139.0
+rect_min_size = Vector2( 425, 0 )
+
+[node name="Name" type="Label" parent="AccountView/HBoxContainer/VBoxContainer"]
+margin_right = 425.0
+margin_bottom = 14.0
+text = "Username"
+autowrap = true
+max_lines_visible = 2
+
+[node name="Control" type="Control" parent="AccountView/HBoxContainer/VBoxContainer"]
+margin_top = 18.0
+margin_right = 425.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 0, 32 )
+
+[node name="Discription" type="Label" parent="AccountView/HBoxContainer/VBoxContainer"]
+margin_top = 54.0
+margin_right = 425.0
+margin_bottom = 68.0
+text = "Discription"
+autowrap = true
+max_lines_visible = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/account_found = SubResource( 1 )
+
+[node name="Button" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -91.5
+margin_top = -24.5836
+margin_right = 91.5
+margin_bottom = -4.58356
+grow_horizontal = 2
+grow_vertical = 2
+text = "Powered by SteemConnect"
+flat = true
+__meta__ = {
+"_edit_lock_": true
+}
+[connection signal="text_changed" from="Username" to="." method="_on_Username_text_changed"]
+[connection signal="text_entered" from="Username" to="." method="_on_Username_text_entered"]
+[connection signal="pressed" from="Link" to="." method="_on_Link_pressed"]
+[connection signal="pressed" from="Cancel" to="." method="_on_Cancel_pressed"]
+[connection signal="timeout" from="text_timeout" to="." method="_on_text_timeout_timeout"]
