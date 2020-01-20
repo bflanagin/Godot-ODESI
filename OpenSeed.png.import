@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/OpenSeed.png-51f6746c4cb87ec0f0b8ee8dec695a8d.stex"
+path="res://.import/OpenSeed.png-da5b13e814e527e7050e3cd3a956fb00.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://OpenSeed/OpenSeed.png"
-dest_files=[ "res://.import/OpenSeed.png-51f6746c4cb87ec0f0b8ee8dec695a8d.stex" ]
+source_file="res://OpenSeed-Godot/OpenSeed.png"
+dest_files=[ "res://.import/OpenSeed.png-da5b13e814e527e7050e3cd3a956fb00.stex" ]
 
 [params]
 

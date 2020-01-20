@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://OpenSeed/steemWallet.gd" type="Script" id=1]
+[ext_resource path="res://OpenSeed-Godot/steemWallet.gd" type="Script" id=1]
 [ext_resource path="res://menu.tres" type="StyleBox" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
 

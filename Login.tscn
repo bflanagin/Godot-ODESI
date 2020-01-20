@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://OpenSeed/Login.gd" type="Script" id=1]
-[ext_resource path="res://OpenSeed/OpenSeed.png" type="Texture" id=2]
+[ext_resource path="res://OpenSeed-Godot/Login.gd" type="Script" id=1]
+[ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=2]
 
 [node name="Login" type="Control"]
 margin_left = 360.0
