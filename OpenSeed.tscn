@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.gd" type="Script" id=1]
 [ext_resource path="res://OpenSeed-Godot/Comment.tscn" type="PackedScene" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://Img/avatar-default-symbolic.svg" type="Texture" id=7]
 [ext_resource path="res://Fonts/subtitle.tres" type="DynamicFont" id=8]
 [ext_resource path="res://Fonts/NaviFont.tres" type="DynamicFont" id=9]
+[ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
 
 [node name="OpenSeed" type="Node"]
 script = ExtResource( 1 )
@@ -175,5 +176,16 @@ margin_right = 470.0
 margin_bottom = 350.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="NewAccount" parent="CanvasLayer" instance=ExtResource( 10 )]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -200.0
+margin_top = -225.0
+margin_right = 200.0
+margin_bottom = 225.0
 [connection signal="comment" from="." to="." method="_on_OpenSeed_comment"]
 [connection signal="socket_returns" from="." to="." method="_on_OpenSeed_socket_returns"]
