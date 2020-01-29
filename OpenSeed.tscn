@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.gd" type="Script" id=1]
 [ext_resource path="res://OpenSeed-Godot/Comment.tscn" type="PackedScene" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://Fonts/subtitle.tres" type="DynamicFont" id=8]
 [ext_resource path="res://Fonts/NaviFont.tres" type="DynamicFont" id=9]
 [ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=11]
 
 [node name="OpenSeed" type="Node"]
 script = ExtResource( 1 )
@@ -25,6 +26,7 @@ margin_left = -333.5
 margin_top = -163.0
 margin_right = 333.5
 margin_bottom = 163.0
+theme = ExtResource( 11 )
 
 [node name="Request" type="Control" parent="CanvasLayer"]
 visible = false
@@ -39,6 +41,19 @@ margin_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 400, 500 )
+theme = ExtResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="shadow" type="Panel" parent="CanvasLayer/Request"]
+modulate = Color( 0.192157, 0.184314, 0.184314, 0.254902 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 15.8668
+margin_top = 12.6935
+margin_right = 15.8668
+margin_bottom = 12.6935
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -49,6 +64,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 400, 500 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
 
 [node name="TextureRect" type="TextureRect" parent="CanvasLayer/Request/Panel"]
 self_modulate = Color( 1, 1, 1, 0.0627451 )
@@ -68,12 +87,13 @@ __meta__ = {
 [node name="Reject" type="Button" parent="CanvasLayer/Request"]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 7.0
-margin_top = -46.5
-margin_right = 96.0
-margin_bottom = -9.5
+margin_left = 20.2965
+margin_top = -52.0402
+margin_right = 109.297
+margin_bottom = -15.0402
 text = "Reject"
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -82,14 +102,15 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -102.0
-margin_top = -46.5
-margin_right = -6.00003
-margin_bottom = -9.5
+margin_left = -117.513
+margin_top = -52.0402
+margin_right = -21.5127
+margin_bottom = -15.0402
 grow_horizontal = 0
 grow_vertical = 0
 text = "Accept"
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -99,24 +120,28 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 margin_left = -44.0
-margin_top = -46.5
+margin_top = -52.0402
 margin_right = 44.0
-margin_bottom = -9.5
+margin_bottom = -15.0402
 grow_horizontal = 2
 grow_vertical = 2
 text = "Latter"
+__meta__ = {
+"_edit_lock_": true
+}
 
 [node name="Label" type="Label" parent="CanvasLayer/Request"]
 anchor_right = 1.0
-margin_top = 193.5
+margin_top = 302.981
 margin_right = -3.05176e-05
-margin_bottom = 239.5
+margin_bottom = 348.981
 custom_fonts/font = ExtResource( 9 )
 text = "User Name"
 align = 1
 valign = 1
 autowrap = true
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -124,9 +149,9 @@ __meta__ = {
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -128.0
-margin_top = -80.0
+margin_top = 21.5478
 margin_right = 128.0
-margin_bottom = 176.0
+margin_bottom = 277.548
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 256, 256 )
@@ -134,6 +159,7 @@ texture = ExtResource( 7 )
 expand = true
 stretch_mode = 6
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -141,14 +167,18 @@ __meta__ = {
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-margin_top = 19.0
+margin_top = 109.441
 margin_right = -3.05176e-05
-margin_bottom = 44.0
+margin_bottom = 134.441
 custom_fonts/font = ExtResource( 8 )
 text = "Wants to form a link with you"
 align = 1
 valign = 1
 autowrap = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
 
 [node name="Login" parent="CanvasLayer" instance=ExtResource( 3 )]
 visible = false
@@ -160,9 +190,11 @@ margin_left = -200.0
 margin_top = -225.0
 margin_right = 200.0
 margin_bottom = 225.0
+theme = ExtResource( 11 )
 
 [node name="SteemLink" parent="CanvasLayer" instance=ExtResource( 4 )]
 visible = false
+theme = ExtResource( 11 )
 
 [node name="steemWallet" parent="CanvasLayer" instance=ExtResource( 5 )]
 visible = false
@@ -176,6 +208,7 @@ margin_right = 470.0
 margin_bottom = 350.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource( 11 )
 
 [node name="NewAccount" parent="CanvasLayer" instance=ExtResource( 10 )]
 visible = false
@@ -187,5 +220,6 @@ margin_left = -200.0
 margin_top = -225.0
 margin_right = 200.0
 margin_bottom = 225.0
+theme = ExtResource( 11 )
 [connection signal="comment" from="." to="." method="_on_OpenSeed_comment"]
 [connection signal="socket_returns" from="." to="." method="_on_OpenSeed_socket_returns"]

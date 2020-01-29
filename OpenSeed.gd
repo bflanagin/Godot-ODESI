@@ -63,15 +63,11 @@ var dev_postingkey = ""
 # steem: Interface to allow users to connect their game to the steem blockchain for cloud services.
 
 func _ready():
-	#emit_signal("interface","login")
-	#loadUserData()
 	pass
 
 # Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
 func verify_account(u,p):
-	#print(u,p)
 	var response = get_from_socket('{"act":"accountcheck","appID":"'+str(appId)+'","devID":"'+str(devId)+'","username":"'+str(u)+'","passphrase":"'+str(p)+'"}')
-	#print(response)
 	return response
 	
 # Creates user based on the provided information. This user is added to the Openseed service. 
@@ -81,9 +77,6 @@ func create_user(u,p,e):
 
 # Links steem account to openseed account for future functions.
 func steem_link(u):
-	
-	#get_from_openseed("steem",openseed,8675,'act=link&username='+str(username))
-# warning-ignore:unused_variable
 	var response = get_from_socket('{"act":"link","appID":"'+str(appId)+'","devID":"'+str(devId)+'","steemname":"'+str(u)+'","username":"'+str(username)+'"}')
 
 
@@ -126,14 +119,13 @@ func get_from_socket(data):
 # warning-ignore:unused_variable
 	var _timeout = 18000
 	var server = StreamPeerTCP.new()
-	#var connect = false
 	if !server.is_connected_to_host():
 		server.connect_to_host(openseed, 8688)
 		while server.get_status() != 2:
 			_timeout -= 1
 	if server.is_connected_to_host():
 		server.put_data(data.to_utf8())
-		var fromserver = server.get_data(161920)
+		var fromserver = server.get_data(16384)
 		#server.disconnect_from_host()
 		return (fromserver[1].get_string_from_ascii())
 	
@@ -146,39 +138,36 @@ func get_from_socket_threaded(data):
 		while threadedServer.get_status() != 2:
 			_timeout -= 1
 	if threadedServer.is_connected_to_host():
-		threadedServer.put_data(data[0].to_utf8())
-		var fromserver = threadedServer.get_data(161920)
-		#threadedServer.disconnect_from_host()
+		threadedServer.put_data(data[0].to_utf8()) 
+		var fromserver = threadedServer.get_data(16384)
+		
 		call_deferred("returned_from_socket",data[1])
 		return (fromserver[1].get_string_from_utf8())
 	
 func get_from_socket_threaded_internal(data):
 	var _timeout = 18000
 	var threadedServerInternal = StreamPeerTCP.new()
-	#var connect = false
 	if !threadedServerInternal.is_connected_to_host(): 
 		threadedServerInternal.connect_to_host(openseed, 8688)
 		while threadedServerInternal.get_status() != 2:
 			_timeout -= 1
 	if threadedServerInternal.is_connected_to_host():
 		threadedServerInternal.put_data(data[0].to_utf8())
-		var fromserver = threadedServerInternal.get_data(161920)
+		var fromserver = threadedServerInternal.get_data(16384)
+		
 		#server.disconnect_from_host()
 		call_deferred("returned_from_socket_internal",data[1])
 		return (fromserver[1].get_string_from_ascii())
 	
 func returned_from_socket_internal(type):
-	#print("From Thread type = ",type)
 	var socket = internal_thread.wait_to_finish()
 	emit_signal("socket_returns",[type,socket])
 	
 func returned_from_socket(type):
-	#print("From Thread type = ",type)
 	var socket = thread.wait_to_finish()
 	emit_signal("socket_returns",[type,socket])
 
 func _on_OpenSeed_socket_returns(data):
-	#print(data[0])
 	match data[0]:
 		"profile":
 			saveUserProfile(data[1])
@@ -230,13 +219,13 @@ func get_leaderboard(number):
 	return scores
 	
 func get_history(account):
-	var history = get_from_socket('{"act":"gethistory","appID":"'+str(appId)+'","devID":"'+str(devId)+',"account":"'+str(account)+'""}')
-	print(history)
+	var history = get_from_socket('{"act":"get_history","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+str(account)+'","count":"10"}')
+	return(history.split("::h::")[1])
 	
 func set_history(action_type,action):
 	var act = ""
 	var act_type = ""
-	var data = "{}"
+	var data = ""
 	match action_type:
 		"program_start":
 			act_type = 1
@@ -254,7 +243,7 @@ func set_history(action_type,action):
 			act_type = 0
 			
 	data ='{"'+action_type+'":"'+action+'"}'
-	get_from_socket('{"act":"update_history","appID":"'+str(appId)+'","devID":"'+str(devId)+'","type":"'+str(act_type)+'","account":"'+str(OpenSeed.token)+'","data":'+str(data)+'}')
+	get_from_socket('{"act":"update_history","appID":"'+str(appId)+'","devID":"'+str(devId)+'","type":"'+str(act_type)+'","account":"'+str(OpenSeed.token)+'","data":'+data+'}')
 	pass
 
 func saveUserData():
@@ -283,7 +272,8 @@ func loadUserProfile(account):
 	else:
 		print("no profile found")
 		internal_thread.start(self,"get_from_socket_threaded_internal", ['{"act":"openseed_profile","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+username+'"}',"profile"])
-
+	return profile_name
+	
 func loadUserData():
 	var file = File.new()
 	var key = appId+devId+str(123456)

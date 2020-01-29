@@ -11,8 +11,23 @@ margin_bottom = 472.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 400, 450 )
-rect_clip_content = true
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="shadow" type="Panel" parent="."]
+modulate = Color( 0.192157, 0.184314, 0.184314, 0.254902 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 9.33081
+margin_top = 12.8299
+margin_right = 9.33081
+margin_bottom = 12.8299
+grow_horizontal = 2
+grow_vertical = 2
+rect_clip_content = true
 __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false
@@ -33,15 +48,14 @@ __meta__ = {
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -44.0
-margin_top = 170.0
+margin_top = 182.059
 margin_right = 49.0
-margin_bottom = 184.0
+margin_bottom = 207.059
 text = "Login"
 align = 1
 valign = 1
 uppercase = true
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -50,13 +64,12 @@ anchor_left = 0.1
 anchor_top = 0.54
 anchor_right = 0.9
 anchor_bottom = 0.59
-margin_top = -26.3853
-margin_bottom = -3.88531
+margin_top = -14.3266
+margin_bottom = 8.1734
 grow_horizontal = 2
 grow_vertical = 2
 placeholder_text = "Username"
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -65,27 +78,28 @@ anchor_left = 0.1
 anchor_top = 0.65
 anchor_right = 0.9
 anchor_bottom = 0.65
-margin_top = -17.2492
-margin_bottom = 27.7508
+margin_top = 15.9124
+margin_bottom = 60.9124
 grow_horizontal = 2
 grow_vertical = 2
 secret = true
 placeholder_text = "Passphrase"
 
 [node name="TextureRect" type="TextureRect" parent="."]
-self_modulate = Color( 1, 1, 1, 0.117647 )
+self_modulate = Color( 1, 1, 1, 0.54902 )
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -71.5
-margin_top = 7.0
+margin_top = 29.6102
 margin_right = 889.5
-margin_bottom = 893.0
+margin_bottom = 915.61
 grow_horizontal = 2
 grow_vertical = 2
 rect_scale = Vector2( 0.15, 0.15 )
 texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -94,9 +108,9 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -63.0
-margin_top = -32.0
-margin_right = -7.0
+margin_left = -98.8299
+margin_top = -49.0
+margin_right = -19.8299
 margin_bottom = -12.0
 grow_horizontal = 0
 grow_vertical = 0
@@ -113,6 +127,9 @@ margin_top = -32.0
 margin_right = 96.0
 margin_bottom = -12.0
 grow_vertical = 0
+custom_colors/font_color = Color( 0.772549, 0.772549, 0.772549, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0.784314, 0.772549, 0, 1 )
 text = "New Account"
 flat = true
 __meta__ = {
@@ -126,12 +143,15 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.52
 margin_left = -110.0
-margin_top = 108.0
+margin_top = 139.654
 margin_right = 113.0
-margin_bottom = 115.0
+margin_bottom = 155.654
 align = 1
 valign = 1
 autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="text_changed" from="Username" to="." method="_on_Username_text_changed"]
 [connection signal="text_changed" from="Passphrase" to="." method="_on_Passphrase_text_changed"]
 [connection signal="pressed" from="Okay" to="." method="_on_Okay_pressed"]

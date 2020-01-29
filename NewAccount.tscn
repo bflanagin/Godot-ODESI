@@ -16,6 +16,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="shadow" type="Panel" parent="."]
+modulate = Color( 0.0901961, 0.0901961, 0.0901961, 0.52549 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 7.36646
+margin_top = 9.82193
+margin_right = 7.36646
+margin_bottom = 9.82193
+grow_horizontal = 2
+grow_vertical = 2
+rect_clip_content = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Panel" type="Panel" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -30,10 +45,10 @@ __meta__ = {
 [node name="Label" type="Label" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -54.0
-margin_top = 170.0
-margin_right = 59.0
-margin_bottom = 184.0
+margin_left = -96.0
+margin_top = 152.223
+margin_right = 101.0
+margin_bottom = 177.223
 grow_horizontal = 2
 grow_vertical = 2
 text = "Create Account"
@@ -51,9 +66,9 @@ anchor_top = 0.54
 anchor_right = 0.9
 anchor_bottom = 0.59
 margin_left = 1.2
-margin_top = -31.1666
+margin_top = -43.444
 margin_right = 0.799988
-margin_bottom = -8.6666
+margin_bottom = -20.944
 grow_horizontal = 2
 grow_vertical = 2
 placeholder_text = "Username"
@@ -68,9 +83,9 @@ anchor_top = 0.65
 anchor_right = 0.9
 anchor_bottom = 0.65
 margin_left = 1.20001
-margin_top = -20.861
+margin_top = -25.7719
 margin_right = 1.20001
-margin_bottom = 24.139
+margin_bottom = 19.2281
 grow_horizontal = 2
 grow_vertical = 2
 placeholder_text = "Email"
@@ -98,7 +113,7 @@ __meta__ = {
 }
 
 [node name="TextureRect" type="TextureRect" parent="."]
-self_modulate = Color( 1, 1, 1, 0.117647 )
+self_modulate = Color( 1, 1, 1, 0.560784 )
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -71.5
@@ -119,10 +134,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -109.0
-margin_top = -45.0
-margin_right = -14.0
-margin_bottom = -8.0
+margin_left = -116.366
+margin_top = -51.1387
+margin_right = -21.3664
+margin_bottom = -14.1387
 grow_horizontal = 0
 grow_vertical = 0
 text = "Create"
@@ -134,10 +149,10 @@ __meta__ = {
 [node name="Cancel" type="Button" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 9.9049
-margin_top = -45.0
-margin_right = 104.905
-margin_bottom = -8.0
+margin_left = 18.4991
+margin_top = -51.1387
+margin_right = 113.499
+margin_bottom = -14.1387
 grow_horizontal = 0
 grow_vertical = 0
 text = "Cancel"
@@ -147,6 +162,7 @@ __meta__ = {
 }
 
 [node name="notification" type="Label" parent="."]
+visible = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
