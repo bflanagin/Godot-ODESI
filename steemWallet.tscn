@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/steemWallet.gd" type="Script" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=2]
 
 [node name="steemWallet" type="Control"]
 anchor_right = 1.0
@@ -28,7 +28,7 @@ margin_top = 10.883
 margin_right = 105.523
 margin_bottom = 106.883
 rect_min_size = Vector2( 96, 96 )
-texture = ExtResource( 3 )
+texture = ExtResource( 2 )
 expand = true
 
 [node name="Name" type="Label" parent="."]
