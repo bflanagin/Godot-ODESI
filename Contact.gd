@@ -1,5 +1,5 @@
 extends TextureRect
-var fallback = preload("res://Img/avatar-default-symbolic.svg")
+var fallback = preload("res://OpenSeed-Godot/avatar-default-symbolic.svg")
 
 var title = ""
 var pImage = ""

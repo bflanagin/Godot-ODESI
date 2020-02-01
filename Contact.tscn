@@ -4,8 +4,6 @@
 [ext_resource path="res://OpenSeed-Godot/Contact.gd" type="Script" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
 
-
-
 [sub_resource type="CanvasItemMaterial" id=1]
 
 [node name="Contact" type="TextureRect"]
