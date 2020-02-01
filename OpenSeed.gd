@@ -42,6 +42,7 @@ var profile_owns = []
 signal login(status)
 # warning-ignore:unused_signal
 signal interface(type)
+signal command(type,data)
 # warning-ignore:unused_signal
 signal linked()
 signal userLoaded()
@@ -77,6 +78,7 @@ func _process(delta):
 # Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
 func verify_account(u,p):
 	var response = get_from_socket('{"act":"accountcheck","appID":"'+str(appId)+'","devID":"'+str(devId)+'","username":"'+str(u)+'","passphrase":"'+str(p)+'"}')
+	print(response)
 	return response
 	
 # Creates user based on the provided information. This user is added to the Openseed service. 
@@ -88,21 +90,6 @@ func create_user(u,p,e):
 func steem_link(u):
 	var response = get_from_socket('{"act":"link","appID":"'+str(appId)+'","devID":"'+str(devId)+'","steemname":"'+str(u)+'","username":"'+str(username)+'"}')
 
-
-func _on_openseed_interface(type):
-	match type :
-		"login":
-			$login.visible = true
-			$new.visible = false
-			#$link.visible = false
-		"steem":
-			$link.visible = true
-			$login.visible = false
-			$new.visible = false
-		_:
-			$link.visible = false
-			$login.visible = false
-			$new.visible = false
 
 func get_steem_account(account):
 	var profile = get_from_socket('{"act":"getaccount","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account+'"}')
@@ -457,3 +444,30 @@ func simp_decrypt(key,raw_data):
 	return decoded.replace(":percent:","%").replace(":ampersand:","&")
 
 
+
+
+func _on_OpenSeed_interface(type):
+	match type :
+		"login":
+			$CanvasLayer/Login.visible = true
+			$CanvasLayer/NewAccount.visible = false
+			#$link.visible = false
+		"steem":
+			$CanvasLayer/SteemLink.visible = true
+			$CanvasLayer/Login.visible = false
+			$CanvasLayer/NewAccount.visible = false
+		_:
+			$CanvasLayer/SteemLink.visible = false
+			$CanvasLayer/Login.visible = false
+			$CanvasLayer/NewAccount.visible = false
+	pass # Replace with function body.
+
+
+func _on_OpenSeed_command(type, data):
+	match type:
+		"loadUser":
+			loadUserData()
+		"loadProfile":
+			loadUserProfile(data)
+
+	pass # Replace with function body.

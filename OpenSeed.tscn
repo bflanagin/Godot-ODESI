@@ -12,9 +12,6 @@
 [ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=11]
 
-
-
-
 [node name="OpenSeed" type="Node"]
 script = ExtResource( 1 )
 
@@ -222,6 +219,8 @@ margin_bottom = 350.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource( 11 )
+[connection signal="command" from="." to="." method="_on_OpenSeed_command"]
 [connection signal="comment" from="." to="." method="_on_OpenSeed_comment"]
+[connection signal="interface" from="." to="." method="_on_OpenSeed_interface"]
 [connection signal="new_tracks" from="." to="." method="_on_OpenSeed_new_tracks"]
 [connection signal="socket_returns" from="." to="." method="_on_OpenSeed_socket_returns"]

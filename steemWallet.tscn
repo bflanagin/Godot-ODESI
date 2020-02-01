@@ -92,6 +92,7 @@ __meta__ = {
 }
 
 [node name="title" type="Label" parent="Download/VBoxContainer"]
+margin_top = 11.0
 margin_right = 788.0
 margin_bottom = 25.0
 align = 1
@@ -100,21 +101,21 @@ valign = 1
 [node name="HSeparator" type="HSeparator" parent="Download/VBoxContainer"]
 margin_top = 46.0
 margin_right = 788.0
-margin_bottom = 54.0
+margin_bottom = 50.0
 
 [node name="Label" type="Label" parent="Download/VBoxContainer"]
-margin_top = 75.0
+margin_top = 71.0
 margin_right = 788.0
-margin_bottom = 224.0
+margin_bottom = 136.0
 text = "Thank you for showing your support of STEEM Musicians!
 
 Please enter the amount below you feel the artist deserves for their hard work. Note: 90% of the proceeds will go to the artist where 10% goes to maintain the software and services."
 autowrap = true
 
 [node name="Control2" type="Control" parent="Download/VBoxContainer"]
-margin_top = 245.0
+margin_top = 157.0
 margin_right = 788.0
-margin_bottom = 277.0
+margin_bottom = 189.0
 rect_min_size = Vector2( 0, 32 )
 
 [node name="payment" type="SpinBox" parent="Download/VBoxContainer/Control2"]
@@ -157,9 +158,9 @@ items = [ "STEEM", null, false, 0, null, "SBD", null, false, 1, null ]
 selected = 0
 
 [node name="Control" type="Control" parent="Download/VBoxContainer"]
-margin_top = 298.0
+margin_top = 210.0
 margin_right = 788.0
-margin_bottom = 330.0
+margin_bottom = 242.0
 rect_min_size = Vector2( 0, 32 )
 
 [node name="cancel" type="Button" parent="Download/VBoxContainer/Control"]
