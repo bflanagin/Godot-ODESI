@@ -1,11 +1,9 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/Comment.gd" type="Script" id=1]
+[ext_resource path="res://OpenSeed-Godot/window-close-symbolic.svg" type="Texture" id=2]
 [ext_resource path="res://OpenSeed-Godot/Fonts/titleFont.tres" type="DynamicFont" id=3]
 [ext_resource path="res://OpenSeed-Godot/Contact.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Img/window-close-symbolic.svg" type="Texture" id=5]
-
-
 
 [node name="Comment" type="Control"]
 anchor_left = 0.5
@@ -99,11 +97,11 @@ margin_top = 4.87674
 margin_right = 19.8028
 margin_bottom = 16.8767
 rect_min_size = Vector2( 12, 12 )
-texture_normal = ExtResource( 5 )
-texture_pressed = ExtResource( 5 )
-texture_hover = ExtResource( 5 )
-texture_disabled = ExtResource( 5 )
-texture_focused = ExtResource( 5 )
+texture_normal = ExtResource( 2 )
+texture_pressed = ExtResource( 2 )
+texture_hover = ExtResource( 2 )
+texture_disabled = ExtResource( 2 )
+texture_focused = ExtResource( 2 )
 expand = true
 stretch_mode = 5
 [connection signal="pressed" from="Send" to="." method="_on_Send_pressed"]

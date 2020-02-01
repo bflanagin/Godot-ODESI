@@ -1,11 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/SteemLink.gd" type="Script" id=1]
-[ext_resource path="res://popup.tres" type="StyleBox" id=2]
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=3]
 [ext_resource path="res://OpenSeed-Godot/Contact.tscn" type="PackedScene" id=4]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=5]
-
 
 [sub_resource type="Animation" id=1]
 resource_name = "account_found"
@@ -82,7 +80,6 @@ margin_left = 7.0
 margin_top = 9.0
 margin_right = 5.0
 margin_bottom = 5.0
-custom_styles/panel = ExtResource( 2 )
 __meta__ = {
 "_edit_lock_": true
 }
