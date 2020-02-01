@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/steemWallet.gd" type="Script" id=1]
-[ext_resource path="res://menu.tres" type="StyleBox" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
 
 [node name="steemWallet" type="Control"]
@@ -19,7 +18,6 @@ __meta__ = {
 [node name="Panel" type="Panel" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = ExtResource( 2 )
 __meta__ = {
 "_edit_lock_": true
 }
