@@ -6,11 +6,14 @@
 [ext_resource path="res://OpenSeed-Godot/SteemLink.tscn" type="PackedScene" id=4]
 [ext_resource path="res://OpenSeed-Godot/steemWallet.tscn" type="PackedScene" id=5]
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=6]
-[ext_resource path="res://Img/avatar-default-symbolic.svg" type="Texture" id=7]
-[ext_resource path="res://Fonts/subtitle.tres" type="DynamicFont" id=8]
-[ext_resource path="res://Fonts/NaviFont.tres" type="DynamicFont" id=9]
+[ext_resource path="res://OpenSeed-Godot/avatar-default-symbolic.svg" type="Texture" id=7]
+[ext_resource path="res://OpenSeed-Godot/Fonts/subtitle.tres" type="DynamicFont" id=8]
+[ext_resource path="res://OpenSeed-Godot/Fonts/NaviFont.tres" type="DynamicFont" id=9]
 [ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=11]
+
+
+
 
 [node name="OpenSeed" type="Node"]
 script = ExtResource( 1 )
