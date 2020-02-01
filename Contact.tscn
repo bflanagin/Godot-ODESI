@@ -1,8 +1,10 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Img/avatar-default-symbolic.svg" type="Texture" id=1]
-[ext_resource path="res://elements/Contact.gd" type="Script" id=2]
+[ext_resource path="res://OpenSeed-Godot/avatar-default-symbolic.svg" type="Texture" id=1]
+[ext_resource path="res://OpenSeed-Godot/Contact.gd" type="Script" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
+
+
 
 [sub_resource type="CanvasItemMaterial" id=1]
 
