@@ -34,6 +34,7 @@ var profile_name = "User"
 var profile_email = "User@mail.com"
 var profile_about = "Does things and stuff"
 var profile_image = ""
+var profile_creator = false
 var profile_owns = [] 
 
 #signals
@@ -56,6 +57,10 @@ signal new_tracks(data)
 var dev_steem = ""
 var dev_postingkey = ""
 
+var server = StreamPeerTCP.new()
+var threadedServer = StreamPeerTCP.new()
+var threadedServerInternal = StreamPeerTCP.new()
+
 # Called when the node enters the scene tree for the first time.
 # Default mode is set to login for obvious reasons. 
 # Current interface options include:
@@ -63,6 +68,10 @@ var dev_postingkey = ""
 # steem: Interface to allow users to connect their game to the steem blockchain for cloud services.
 
 func _ready():
+	print("System reports "+str(OS.get_name()))
+	pass
+	
+func _process(delta):
 	pass
 
 # Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
@@ -114,11 +123,11 @@ func get_openseed_account_status(account):
 func set_openseed_account_status(account_id,data):
 	var status = parse_json(get_from_socket('{"act":"update_status","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account_id+'","data":'+data+'}'))
 	return status
-
+	
 func get_from_socket(data):
 # warning-ignore:unused_variable
 	var _timeout = 18000
-	var server = StreamPeerTCP.new()
+	#var server = StreamPeerTCP.new()
 	if !server.is_connected_to_host():
 		server.connect_to_host(openseed, 8688)
 		while server.get_status() != 2:
@@ -132,7 +141,7 @@ func get_from_socket(data):
 func get_from_socket_threaded(data):
 # warning-ignore:unused_variable
 	var _timeout = 18000
-	var threadedServer = StreamPeerTCP.new()
+	#var threadedServer = StreamPeerTCP.new()
 	if !threadedServer.is_connected_to_host(): 
 		threadedServer.connect_to_host(openseed, 8688)
 		while threadedServer.get_status() != 2:
@@ -140,13 +149,12 @@ func get_from_socket_threaded(data):
 	if threadedServer.is_connected_to_host():
 		threadedServer.put_data(data[0].to_utf8()) 
 		var fromserver = threadedServer.get_data(16384)
-		
 		call_deferred("returned_from_socket",data[1])
 		return (fromserver[1].get_string_from_utf8())
 	
 func get_from_socket_threaded_internal(data):
 	var _timeout = 18000
-	var threadedServerInternal = StreamPeerTCP.new()
+	#var threadedServerInternal = StreamPeerTCP.new()
 	if !threadedServerInternal.is_connected_to_host(): 
 		threadedServerInternal.connect_to_host(openseed, 8688)
 		while threadedServerInternal.get_status() != 2:

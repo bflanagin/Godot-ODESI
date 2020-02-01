@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/SteemLink.gd" type="Script" id=1]
 [ext_resource path="res://popup.tres" type="StyleBox" id=2]
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=3]
 [ext_resource path="res://elements/Contact.tscn" type="PackedScene" id=4]
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=5]
 
 [sub_resource type="Animation" id=1]
 resource_name = "account_found"
@@ -66,6 +67,7 @@ margin_top = -200.0
 margin_right = 332.851
 margin_bottom = 187.0
 rect_min_size = Vector2( 600, 300 )
+theme = ExtResource( 5 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -90,7 +92,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_clip_content = true
-custom_styles/panel = ExtResource( 2 )
 __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false
@@ -125,10 +126,9 @@ margin_bottom = 49.4072
 [node name="Label" type="Label" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -57.5
-margin_top = 10.0
-margin_right = 49.5
-margin_bottom = 24.0
+margin_left = -94.0
+margin_right = 94.0
+margin_bottom = 25.0
 text = "Steem Account"
 align = 1
 valign = 1
@@ -210,7 +210,6 @@ __meta__ = {
 [node name="text_timeout" type="Timer" parent="."]
 
 [node name="AccountView" type="Control" parent="."]
-visible = false
 modulate = Color( 1, 1, 1, 0.0186709 )
 anchor_right = 1.0
 margin_left = 7.0
@@ -222,6 +221,9 @@ margin_bottom = 193.738
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Contact" parent="AccountView/HBoxContainer" instance=ExtResource( 4 )]
 margin_right = 128.0
@@ -236,24 +238,24 @@ rect_min_size = Vector2( 425, 0 )
 
 [node name="Name" type="Label" parent="AccountView/HBoxContainer/VBoxContainer"]
 margin_right = 425.0
-margin_bottom = 25.0
+margin_bottom = 29.0
 text = "Username"
 autowrap = true
 max_lines_visible = 2
 
 [node name="Control" type="Control" parent="AccountView/HBoxContainer/VBoxContainer"]
-margin_top = 33.0
+margin_top = 37.0
 margin_right = 425.0
-margin_bottom = 65.0
-rect_min_size = Vector2( 0, 32 )
+margin_bottom = 47.0
+rect_min_size = Vector2( 0, 10 )
 
 [node name="Discription" type="Label" parent="AccountView/HBoxContainer/VBoxContainer"]
-margin_top = 73.0
+margin_top = 55.0
 margin_right = 425.0
-margin_bottom = 98.0
+margin_bottom = 84.0
 text = "Discription"
 autowrap = true
-max_lines_visible = 4
+max_lines_visible = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/account_found = SubResource( 1 )

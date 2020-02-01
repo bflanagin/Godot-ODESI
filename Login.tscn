@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/Login.gd" type="Script" id=1]
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=2]
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=3]
 
 [node name="Login" type="Control"]
 margin_left = 360.0
@@ -11,6 +12,7 @@ margin_bottom = 472.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 400, 450 )
+theme = ExtResource( 3 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_lock_": true,
@@ -51,7 +53,9 @@ margin_left = -44.0
 margin_top = 182.059
 margin_right = 49.0
 margin_bottom = 207.059
-text = "Login"
+grow_horizontal = 2
+grow_vertical = 2
+text = "OpenSeed Login"
 align = 1
 valign = 1
 uppercase = true
@@ -61,29 +65,28 @@ __meta__ = {
 
 [node name="Username" type="LineEdit" parent="."]
 anchor_left = 0.1
-anchor_top = 0.54
+anchor_top = 0.518249
 anchor_right = 0.9
-anchor_bottom = 0.59
-margin_top = -14.3266
-margin_bottom = 8.1734
+anchor_bottom = 0.605749
 grow_horizontal = 2
 grow_vertical = 2
 placeholder_text = "Username"
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": true
 }
 
 [node name="Passphrase" type="LineEdit" parent="."]
 anchor_left = 0.1
-anchor_top = 0.65
+anchor_top = 0.651013
 anchor_right = 0.9
-anchor_bottom = 0.65
-margin_top = 15.9124
-margin_bottom = 60.9124
+anchor_bottom = 0.726013
 grow_horizontal = 2
 grow_vertical = 2
 secret = true
 placeholder_text = "Passphrase"
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="TextureRect" type="TextureRect" parent="."]
 self_modulate = Color( 1, 1, 1, 0.54902 )
@@ -138,19 +141,17 @@ __meta__ = {
 }
 
 [node name="notification" type="Label" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.52
-margin_left = -110.0
-margin_top = 139.654
-margin_right = 113.0
-margin_bottom = 155.654
+anchor_left = 0.22125
+anchor_top = 0.841128
+anchor_right = 0.77875
+anchor_bottom = 0.889461
+grow_horizontal = 2
+grow_vertical = 2
 align = 1
 valign = 1
 autowrap = true
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": true
 }
 [connection signal="text_changed" from="Username" to="." method="_on_Username_text_changed"]
 [connection signal="text_changed" from="Passphrase" to="." method="_on_Passphrase_text_changed"]
