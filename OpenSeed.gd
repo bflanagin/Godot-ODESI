@@ -58,7 +58,7 @@ signal new_tracks(data)
 var dev_steem = ""
 var dev_postingkey = ""
 
-var server = StreamPeerTCP.new()
+
 var threadedServer = StreamPeerTCP.new()
 var threadedServerInternal = StreamPeerTCP.new()
 
@@ -78,7 +78,6 @@ func _process(delta):
 # Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
 func verify_account(u,p):
 	var response = get_from_socket('{"act":"accountcheck","appID":"'+str(appId)+'","devID":"'+str(devId)+'","username":"'+str(u)+'","passphrase":"'+str(p)+'"}')
-	print(response)
 	return response
 	
 # Creates user based on the provided information. This user is added to the Openseed service. 
@@ -114,7 +113,7 @@ func set_openseed_account_status(account_id,data):
 func get_from_socket(data):
 # warning-ignore:unused_variable
 	var _timeout = 18000
-	#var server = StreamPeerTCP.new()
+	var server = StreamPeerTCP.new()
 	if !server.is_connected_to_host():
 		server.connect_to_host(openseed, 8688)
 		while server.get_status() != 2:
@@ -122,7 +121,7 @@ func get_from_socket(data):
 	if server.is_connected_to_host():
 		server.put_data(data.to_utf8())
 		var fromserver = server.get_data(16384)
-		#server.disconnect_from_host()
+		server.disconnect_from_host()
 		return (fromserver[1].get_string_from_ascii())
 	
 func get_from_socket_threaded(data):
@@ -466,6 +465,7 @@ func _on_OpenSeed_interface(type):
 func _on_OpenSeed_command(type, data):
 	match type:
 		"loadUser":
+			print("Loading user")
 			loadUserData()
 		"loadProfile":
 			loadUserProfile(data)

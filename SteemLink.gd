@@ -5,7 +5,6 @@ extends Control
 # var a = 2
 # var b = "text"
 var OpenSeed
-var Thicket 
 
 var imageFile = Image.new()
 var textureFile = ImageTexture.new()
@@ -16,7 +15,6 @@ signal linked
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	OpenSeed = get_node("/root/OpenSeed")
-	Thicket = get_node("/root/Thicket")
 	
 	pass # Replace with function body.
 

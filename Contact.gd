@@ -9,13 +9,11 @@ var texblock = ""
 var highlight = false
 #var loadAnimDone = false
 var OpenSeed
-var Thicket	
 
 signal refresh()
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	OpenSeed = get_node("/root/OpenSeed")
-	Thicket = get_node("/root/Thicket")
 	#set_box(title,pImage)
 
 func set_box(image,profileImage):
