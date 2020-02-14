@@ -71,6 +71,7 @@ margin_right = 0.799988
 margin_bottom = -20.944
 grow_horizontal = 2
 grow_vertical = 2
+max_length = 255
 placeholder_text = "Username"
 __meta__ = {
 "_edit_lock_": true,
@@ -88,6 +89,7 @@ margin_right = 1.20001
 margin_bottom = 19.2281
 grow_horizontal = 2
 grow_vertical = 2
+max_length = 255
 placeholder_text = "Email"
 __meta__ = {
 "_edit_lock_": true,
@@ -105,6 +107,7 @@ margin_right = 1.20001
 margin_bottom = 83.7829
 grow_horizontal = 2
 grow_vertical = 2
+max_length = 255
 secret = true
 placeholder_text = "Passphrase"
 __meta__ = {

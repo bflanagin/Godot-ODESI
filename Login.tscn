@@ -70,6 +70,7 @@ anchor_right = 0.9
 anchor_bottom = 0.605749
 grow_horizontal = 2
 grow_vertical = 2
+max_length = 255
 placeholder_text = "Username"
 __meta__ = {
 "_edit_use_anchors_": true
@@ -82,6 +83,7 @@ anchor_right = 0.9
 anchor_bottom = 0.726013
 grow_horizontal = 2
 grow_vertical = 2
+max_length = 255
 secret = true
 placeholder_text = "Passphrase"
 __meta__ = {

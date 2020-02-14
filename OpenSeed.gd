@@ -33,6 +33,7 @@ var online = true
 var profile_name = "User"
 var profile_email = "User@mail.com"
 var profile_about = "Does things and stuff"
+var profile_phone = ""
 var profile_image = ""
 var profile_creator = false
 var profile_owns = [] 
@@ -262,6 +263,8 @@ func loadUserProfile(account):
 		profile_name = content["data1"]["name"]
 		profile_about = content["data2"]["about"]
 		profile_image = content["data5"]["profile"]["profile_image"]
+		profile_email = content["data1"]["email"]
+		profile_phone = content["data1"]["phone"]
 		file.close()
 	else:
 		print("no profile found")
@@ -333,7 +336,7 @@ func check_ipfs():
 		if ipfs_path != "":
 			ipfs = ipfs_path
 # warning-ignore:return_value_discarded
-			OS.execute("ps",["-e"],true,output)
+			OS.execute("ps",["-e"],true,ipfs_output)
 			print(ipfs_output[0].find("ipfs"))
 			if ipfs_output[0].find("ipfs") == -1:
 				print(OS.execute(ipfs_path,["daemon","--routing=dhtclient"],false))
@@ -441,9 +444,6 @@ func simp_decrypt(key,raw_data):
 				else:
 					decoded = "Unable to Decrypt"
 	return decoded.replace(":percent:","%").replace(":ampersand:","&")
-
-
-
 
 func _on_OpenSeed_interface(type):
 	match type :
