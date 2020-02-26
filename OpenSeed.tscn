@@ -219,6 +219,65 @@ margin_bottom = 350.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource( 11 )
+
+[node name="musicInfo" type="Control" parent="CanvasLayer"]
+visible = false
+anchor_left = 0.00207287
+anchor_top = 0.00683348
+anchor_right = 0.212599
+anchor_bottom = 0.0823052
+margin_left = -3.93846
+margin_top = -7.24349
+margin_right = -3.93845
+margin_bottom = -7.24349
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 400, 80 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Panel" type="Panel" parent="CanvasLayer/musicInfo"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/musicInfo"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_left = 5.98738
+margin_top = -28.5
+margin_right = 62.9874
+margin_bottom = 28.5
+stretch_mode = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/musicInfo"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 79.0
+margin_right = -3.05176e-05
+grow_horizontal = 2
+grow_vertical = 2
+rect_clip_content = true
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="CanvasLayer/musicInfo/VBoxContainer"]
+margin_top = 11.0
+margin_right = 321.0
+margin_bottom = 36.0
+
+[node name="Artist" type="Label" parent="CanvasLayer/musicInfo/VBoxContainer"]
+margin_top = 44.0
+margin_right = 321.0
+margin_bottom = 69.0
 [connection signal="command" from="." to="." method="_on_OpenSeed_command"]
 [connection signal="comment" from="." to="." method="_on_OpenSeed_comment"]
 [connection signal="interface" from="." to="." method="_on_OpenSeed_interface"]

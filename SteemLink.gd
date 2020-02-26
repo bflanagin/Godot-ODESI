@@ -25,7 +25,7 @@ func _on_Link_pressed():
 	var fulllink = "https://steemconnect.com/oauth2/authorize?client_id=openseed&redirect_uri="+redirect+"&response_type=code&scope=offline,comment,vote,comment_option,custom_json"
 	match (OS.get_name()):
 		"X11":
-			var pid = OS.execute("x-www-browser",[fulllink],true)
+			var _pid = OS.execute("x-www-browser",[fulllink],true)
 			
 	emit_signal("linked")
 
@@ -60,7 +60,7 @@ func _on_Username_text_entered(new_text):
 	print(new_text)
 	pass # Replace with function body.
 
-func _on_Username_text_changed(new_text):
+func _on_Username_text_changed(_new_text):
 	$text_timeout.start()
 	pass # Replace with function body.
 

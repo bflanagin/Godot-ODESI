@@ -2,7 +2,6 @@ extends Node
 
 # Setup variables 
 var thread = Thread.new()
-var internal_thread = Thread.new()
 
 var username = ""
 # warning-ignore:unused_class_variable
@@ -16,8 +15,10 @@ var postingkey = ""
 # warning-ignore:unused_class_variable
 var steem_node = ""
 # warning-ignore:unused_class_variable
+var devPub = ""
 var devId = ""
 # warning-ignore:unused_class_variable
+var appPub = ""
 var appId = ""
 var openseed = "openseed.solutions"
 var version = ""
@@ -26,6 +27,7 @@ var connection = ""
 # warning-ignore:unused_class_variable
 var output = ""
 var online = true
+var mode = "socket"
 
 #var threadedServer = StreamPeerTCP.new()
 #var threadedServerInternal = StreamPeerTCP.new()
@@ -43,6 +45,7 @@ var profile_owns = []
 signal login(status)
 # warning-ignore:unused_signal
 signal interface(type)
+# warning-ignore:unused_signal
 signal command(type,data)
 # warning-ignore:unused_signal
 signal linked()
@@ -55,13 +58,14 @@ signal socket_returns(data)
 signal chatdata(data)
 signal sent_chat(data)
 signal new_tracks(data)
+signal historydata(data)
 
 var dev_steem = ""
 var dev_postingkey = ""
-
+var appdefaults 
 
 var threadedServer = StreamPeerTCP.new()
-var threadedServerInternal = StreamPeerTCP.new()
+var server = StreamPeerTCP.new()
 
 # Called when the node enters the scene tree for the first time.
 # Default mode is set to login for obvious reasons. 
@@ -70,94 +74,122 @@ var threadedServerInternal = StreamPeerTCP.new()
 # steem: Interface to allow users to connect their game to the steem blockchain for cloud services.
 
 func _ready():
-	print("System reports "+str(OS.get_name()))
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
 	pass
 	
-func _process(delta):
-	pass
+#func _process(delta):
+#	pass
+
+func _on_OpenSeed_command(type, data):
+	match mode:
+		"socket":
+			match type:
+				"loadUser":
+					print("Loading user")
+					loadUserData()
+				"loadProfile":
+					loadUserProfile(data)
+				"history":
+					get_history(data)
+				"updateStatus":
+					set_openseed_account_status(OpenSeed.token,data)
+				"getStatus":
+					get_openseed_account_status(data)
+
+	pass # Replace with function body.
+
+
 
 # Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
 func verify_account(u,p):
-	var response = get_from_socket('{"act":"accountcheck","appID":"'+str(appId)+'","devID":"'+str(devId)+'","username":"'+str(u)+'","passphrase":"'+str(p)+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var data = '{"act":"accountcheck",'+ \
+				appdefaults+','+ \
+				'"username":"'+str(u)+'",'+ \
+				'"passphrase":"'+str(p)+'",'+ \
+				'}'
+	var response = get_from_socket(str(data))
 	return response
 	
 # Creates user based on the provided information. This user is added to the Openseed service. 
 func create_user(u,p,e):
-	var response = get_from_socket('{"act":"create","appID":"'+str(appId)+'","devID":"'+str(devId)+'","username":"'+str(u)+'","passphrase":"'+str(p)+'","email":"'+str(e)+'" }')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var response = get_from_socket('{"act":"create",'+appdefaults+',"username":"'+str(u)+'","passphrase":"'+str(p)+'","email":"'+str(e)+'" }')
 	return response
 
 # Links steem account to openseed account for future functions.
 func steem_link(u):
-	var response = get_from_socket('{"act":"link","appID":"'+str(appId)+'","devID":"'+str(devId)+'","steemname":"'+str(u)+'","username":"'+str(username)+'"}')
-
+	var response = get_from_socket('{"act":"link",'+appdefaults+',"steemname":"'+str(u)+'","username":"'+str(username)+'"}')
+	return response
 
 func get_steem_account(account):
-	var profile = get_from_socket('{"act":"getaccount","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var profile = get_from_socket('{"act":"getaccount",'+appdefaults+',"account":"'+account+'"}')
 	return profile
 
 func get_full_steem_account(account):
-	var profile = get_from_socket('{"act":"getfullaccount","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var profile = get_from_socket('{"act":"getfullaccount",'+appdefaults+',"account":"'+account+'"}')
 	return profile
 
 func get_openseed_account(account):
-	var profile = parse_json(get_from_socket('{"act":"openseed_profile","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account+'"}'))
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var profile = parse_json(get_from_socket('{"act":"openseed_profile",'+appdefaults+',"account":"'+account+'"}'))
 	return profile
 
 func get_openseed_account_status(account):
-	var status = parse_json(get_from_socket('{"act":"get_status","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account+'"}'))
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var status = parse_json(get_from_socket('{"act":"get_status",'+appdefaults+',"account":"'+account+'"}'))
 	return status
 	
 func set_openseed_account_status(account_id,data):
-	var status = parse_json(get_from_socket('{"act":"update_status","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account_id+'","data":'+data+'}'))
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var status = parse_json(get_from_socket('{"act":"update_status",'+appdefaults+',"account":"'+account_id+'","data":'+data+'}'))
 	return status
 	
 func get_from_socket(data):
 # warning-ignore:unused_variable
+	var fullreturn = ""
 	var _timeout = 18000
-	var server = StreamPeerTCP.new()
 	if !server.is_connected_to_host():
 		server.connect_to_host(openseed, 8688)
 		while server.get_status() != 2:
 			_timeout -= 1
 	if server.is_connected_to_host():
-		server.put_data(data.to_utf8())
-		var fromserver = server.get_data(16384)
+		if server.get_status() == 2:
+			server.put_data(data.to_utf8())
+			var fromserver = server.get_data(1)
+			var size = server.get_available_bytes()
+			var therest = server.get_data(size)
+			fullreturn = fromserver[1].get_string_from_utf8() + therest[1].get_string_from_utf8()
+		
 		server.disconnect_from_host()
-		return (fromserver[1].get_string_from_ascii())
+		return (fullreturn)
 	
 func get_from_socket_threaded(data):
 # warning-ignore:unused_variable
+	var fullreturn = ""
 	var _timeout = 18000
-	#var threadedServer = StreamPeerTCP.new()
+	var therest
 	if !threadedServer.is_connected_to_host(): 
 		threadedServer.connect_to_host(openseed, 8688)
 		while threadedServer.get_status() != 2:
 			_timeout -= 1
 	if threadedServer.is_connected_to_host():
-		threadedServer.put_data(data[0].to_utf8()) 
-		var fromserver = threadedServer.get_data(16384)
-		call_deferred("returned_from_socket",data[1])
-		return (fromserver[1].get_string_from_utf8())
-	
-func get_from_socket_threaded_internal(data):
-	var _timeout = 18000
-	#var threadedServerInternal = StreamPeerTCP.new()
-	if !threadedServerInternal.is_connected_to_host(): 
-		threadedServerInternal.connect_to_host(openseed, 8688)
-		while threadedServerInternal.get_status() != 2:
-			_timeout -= 1
-	if threadedServerInternal.is_connected_to_host():
-		threadedServerInternal.put_data(data[0].to_utf8())
-		var fromserver = threadedServerInternal.get_data(16384)
+		if threadedServer.get_status() == 2 :
+			threadedServer.put_data(data[0].to_utf8())
+			var fromserver = threadedServer.get_data(1)
+			var size = threadedServer.get_available_bytes()
+			if size > 0:
+				therest = threadedServer.get_data(size)
+				fullreturn = fromserver[1].get_string_from_utf8() + therest[1].get_string_from_utf8()
+			else:
+				fullreturn = fromserver[1].get_string_from_utf8()
+		if len(fullreturn) >= 0:
+			call_deferred("returned_from_socket",data[1])
+			
+		return (fullreturn)
 		
-		#server.disconnect_from_host()
-		call_deferred("returned_from_socket_internal",data[1])
-		return (fromserver[1].get_string_from_ascii())
-	
-func returned_from_socket_internal(type):
-	var socket = internal_thread.wait_to_finish()
-	emit_signal("socket_returns",[type,socket])
-	
 func returned_from_socket(type):
 	var socket = thread.wait_to_finish()
 	emit_signal("socket_returns",[type,socket])
@@ -172,6 +204,10 @@ func _on_OpenSeed_socket_returns(data):
 			emit_signal("sent_chat",data[1])
 		"newtracks":
 			emit_signal("new_tracks",data[1])
+		"history":
+			var jsoned = parse_json(data[1])
+			if typeof(jsoned) == TYPE_DICTIONARY:
+				emit_signal("historydata",jsoned["h"])
 		_:
 			print("unknown")
 			
@@ -196,6 +232,7 @@ func _on_link_linked():
 # a small fee 0.001 STEEM is required to post the memo on openseeds account to store the information on the chain. 
 
 func update_leaderboard(u,d):
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
 	var dataformat = '{\\"'
 	var datapoint = 0
 	while datapoint < len(d):
@@ -205,22 +242,34 @@ func update_leaderboard(u,d):
 			dataformat = str(dataformat)+'\\",\\"'
 		datapoint += 1
 	dataformat = dataformat+'\\"}'
-	var response = get_from_socket('{"act":"toleaderboard","appID":"'+str(appId)+'","devID":"'+str(devId)+'","username":"'+str(u)+'","data":"'+str(dataformat)+'","steem":"'+str(dev_steem)+'","postingkey":"'+str(dev_postingkey)+'"}')
+	var response = get_from_socket('{"act":"toleaderboard",'+appdefaults+',"username":"'+str(u)+'","data":"'+str(dataformat)+'","steem":"'+str(dev_steem)+'","postingkey":"'+str(dev_postingkey)+'"}')
 	return response
 	
 # warning-ignore:unused_argument
 func get_leaderboard(number):
-	var scores = get_from_socket('{"act":"getleaderboard","appID":"'+str(appId)+'","devID":"'+str(devId)+'"}')
+	var scores = get_from_socket('{"act":"getleaderboard",'+appdefaults+'}')
 	return scores
 	
 func get_history(account):
-	var history = get_from_socket('{"act":"get_history","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+str(account)+'","count":"10"}')
-	return(history.split("::h::")[1])
+	var data = ['{"act":"get_history",'+ \
+				'"appPub":"'+str(appPub)+'",'+ \
+				'"devPub":"'+str(devPub)+'",'+ \
+				'"account":"'+str(account)+'",'+ \
+				'"apprange":"all",'+ \
+				'"count":"10"}',"history"]
+	#var _history = get_from_socket(str(data))
+	if !thread.is_active():
+			thread.start(self,"get_from_socket_threaded",data)
+	#var jsoned = parse_json(_history)
+	#if jsoned:
+	#	emit_signal("socket_returns",["history",jsoned["h"]])
+	#	return(jsoned["h"])
 	
 func set_history(action_type,action):
 	var act = ""
 	var act_type = ""
 	var data = ""
+	
 	match action_type:
 		"program_start":
 			act_type = 1
@@ -236,9 +285,9 @@ func set_history(action_type,action):
 			act_type = 6
 		_:
 			act_type = 0
-			
+	var packet = '"act":"update_history",'+appdefaults+',"type":"'+str(act_type)+'","account":"'+str(OpenSeed.token)+'"'
 	data ='{"'+action_type+'":"'+action+'"}'
-	get_from_socket('{"act":"update_history","appID":"'+str(appId)+'","devID":"'+str(devId)+'","type":"'+str(act_type)+'","account":"'+str(OpenSeed.token)+'","data":'+data+'}')
+	get_from_socket('{'+packet+',"data":'+data+'}')
 	pass
 
 func saveUserData():
@@ -256,19 +305,33 @@ func saveUserProfile(data):
 	file.close()
 	
 func loadUserProfile(account):
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
 	var file = File.new()
+	var profile
 	if file.file_exists("user://"+account+"profile.dat"):
 		file.open("user://"+account+"profile.dat",File.READ)
 		var content = parse_json(file.get_as_text())
-		profile_name = content["data1"]["name"]
-		profile_about = content["data2"]["about"]
-		profile_image = content["data5"]["profile"]["profile_image"]
-		profile_email = content["data1"]["email"]
-		profile_phone = content["data1"]["phone"]
+		if content:
+			profile_name = content["data1"]["name"]
+			profile_about = content["data2"]["about"]
+			profile_image = content["data5"]["profile"]["profile_image"]
+			profile_email = content["data1"]["email"]
+			profile_phone = content["data1"]["phone"]
+			emit_signal("userLoaded")
+		else:
+			print("no profile found")
+			if !thread.is_active():
+				#thread.start(self,"get_from_socket_threaded", ['{"act":"openseed_profile",'+appdefaults+',"account":"'+account+'"}',"profile"])
+				profile =get_from_socket('{"act":"openseed_profile",'+appdefaults+',"account":"'+account+'"}')
+				emit_signal("socket_returns",["profile",profile])
 		file.close()
 	else:
 		print("no profile found")
-		internal_thread.start(self,"get_from_socket_threaded_internal", ['{"act":"openseed_profile","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+username+'"}',"profile"])
+		if !thread.is_active():
+			#thread.start(self,"get_from_socket_threaded", ['{"act":"openseed_profile",'+appdefaults+',"account":"'+account+'"}',"profile"])
+			profile = get_from_socket('{"act":"openseed_profile",'+appdefaults+',"account":"'+account+'"}')
+			emit_signal("socket_returns",["profile",profile])
+			
 	return profile_name
 	
 func loadUserData():
@@ -288,41 +351,31 @@ func loadUserData():
 		
 	return content
 
-func _on_Timer_timeout():
-	$LeaderBoard.emit_signal("get_scores",10)
-	pass
-
 func send_tokens(amount,to,what):
-	var response = get_from_socket('{"act":"payment","appID":"'+str(appId)+'","devID":"'+str(devId)+'","steemaccount":"'+str(steem)+'","amount":"'+str(amount)+'","to":"'+str(to)+'","for":"'+str(what)+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var response = get_from_socket('{"act":"payment",'+appdefaults+',"steemaccount":"'+str(steem)+'","amount":"'+str(amount)+'","to":"'+str(to)+'","for":"'+str(what)+'"}')
 	return response
 
 func send_like(post):
-	var response = get_from_socket('{"act":"like","appID":"'+str(appId)+'","devID":"'+str(devId)+'","steemaccount":"'+str(steem)+'","post":"'+post+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var response = get_from_socket('{"act":"like",'+appdefaults+',"steemaccount":"'+str(steem)+'","post":"'+post+'"}')
 	return response
 
 func follow(user):
-	var response = get_from_socket('{"act":"follow","appID":"'+str(appId)+'","devID":"'+str(devId)+'","steemaccount":"'+str(steem)+'","follow":"'+user+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var response = get_from_socket('{"act":"follow",'+appdefaults+',"steemaccount":"'+str(steem)+'","follow":"'+user+'"}')
 	return response
 	
 func get_connections(account):
-	var profile = get_from_socket('{"act":"openseed_connections","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var profile = get_from_socket('{"act":"openseed_connections",'+appdefaults+',"account":"'+account+'"}')
 	return profile
 	
 func send_comment(account,comment,post):
-	var response = get_from_socket('{"act":"comment","appID":"'+str(appId)+'","devID":"'+str(devId)+'","account":"'+account+'","comment":"'+comment+'","post":"'+post+'"}')
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var response = get_from_socket('{"act":"comment",'+appdefaults+',"account":"'+account+'","comment":"'+comment+'","post":"'+post+'"}')
 	return response
 
-#func get_updates():
-		#var response = get_from_socket('{"act":"update","appID":"'+str(appId)+'","devID":"'+str(devId)+'"}')
-		#if response != version:
-			#var headers = [
-				#	"User-Agent: Pirulo/1.0 (Godot)",
-				#	"Accept: */*"
-				#]
-			#$HTTPRequest.request(str(image),headers,false,HTTPClient.METHOD_GET)
-
-func check_dev():
-	pass
 
 func check_ipfs():
 	var ipfs_output = []
@@ -341,20 +394,42 @@ func check_ipfs():
 			if ipfs_output[0].find("ipfs") == -1:
 				print(OS.execute(ipfs_path,["daemon","--routing=dhtclient"],false))
 	pass
+	
+###########################################################################
+#
+# Chat Functions 
+#
+###########################################################################
+	
+# warning-ignore:shadowed_variable
+func get_chat(username,account,last):
+	var command = ['{"act":"get_chat","appPub":"'+ \
+					str(appPub)+'","devPub":"'+str(devPub)+ \
+					'","uid":"'+username+'","account":"'+account+ \
+					'","room":"'+username+','+account+'","last":"'+str(last)+'"}' \
+					,"chat"]
+	if account:
+		if !thread.is_active():
+			thread.start(self,"get_from_socket_threaded",command)
 
-#func _on_OpenSeed_comment(info):
-#	print("Getting here")
-	#var cment = Comment.instance()
-	#cment.show()
-	#$CanvasLayer.add_child(cment)
-#	$CanvasLayer/Comment.show()
-#	pass # Replace with function body.
+# warning-ignore:shadowed_variable
+func send_chat(message,username,account):
+	var command = ['{"act":"send_chat","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
+					'","uid":"'+token+'","username":"'+username+'","account":"'+account+'","data":"'+message+'"}' \
+					,"send_chat"]
+	if account:
+		if !thread.is_active():
+			thread.start(self,"get_from_socket_threaded",command)
+			#get_from_socket(command)
+	
+	
 
 # Encryption Functions
 	
 func get_keys_for(users):
-	var response = get_from_socket('{"act":"update_key","appID":"'+str(appId)+'","devID":"'+str(devId)+'","thetype":"1","users":"'+users+'","uid":"'+token+'"}')
-	return response.split("<::>")[1]
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var response = get_from_socket('{"act":"update_key",'+appdefaults+',"thetype":"1","users":"'+users+'","uid":"'+token+'"}')
+	return parse_json(response)["key"]
 
 func simp_crypt(key,raw_data):
 	key = key.replace("0","q")\
@@ -392,7 +467,6 @@ func simp_crypt(key,raw_data):
 							break
 						else:
 							secret = secret + key[num]
-#                    	//secret = secret+data[datanum]
 				else:
 					secret = secret+data[datanum]
 				datanum += 1
@@ -403,7 +477,6 @@ func simp_crypt(key,raw_data):
 					keynum = 0
 					secret = secret + key[keynum]
 			keynum += 1
-		#datanum += 1
 	return secret.replace(" ","zZz")
 
 func simp_decrypt(key,raw_data):
@@ -462,12 +535,4 @@ func _on_OpenSeed_interface(type):
 	pass # Replace with function body.
 
 
-func _on_OpenSeed_command(type, data):
-	match type:
-		"loadUser":
-			print("Loading user")
-			loadUserData()
-		"loadProfile":
-			loadUserProfile(data)
 
-	pass # Replace with function body.
