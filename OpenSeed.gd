@@ -2,6 +2,9 @@ extends Node
 
 # Setup variables 
 var thread = Thread.new()
+var imgfile = File.new()
+var Imagedata = Image.new()
+var noimage = preload("res://Img/folder-music-symbolic.svg")
 
 var username = ""
 # warning-ignore:unused_class_variable
@@ -39,6 +42,14 @@ var profile_phone = ""
 var profile_image = ""
 var profile_creator = false
 var profile_owns = [] 
+var profile_creator_Id = ""
+var profile_creator_Pub = ""
+
+# Image store. This is used to access any images that come from OpenSeed itself
+# We use a standard dictionary where the image name is the key and the texture is the value. 
+# We will have functions to set and retrieve image data.
+
+var image_store = {}
 
 #signals
 # warning-ignore:unused_signal
@@ -103,11 +114,7 @@ func _on_OpenSeed_command(type, data):
 # Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
 func verify_account(u,p):
 	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var data = '{"act":"accountcheck",'+ \
-				appdefaults+','+ \
-				'"username":"'+str(u)+'",'+ \
-				'"passphrase":"'+str(p)+'",'+ \
-				'}'
+	var data = '{"act":"accountcheck",'+appdefaults+',"username":"'+str(u)+'","passphrase":"'+str(p)+'"}'
 	var response = get_from_socket(str(data))
 	return response
 	
@@ -207,7 +214,8 @@ func _on_OpenSeed_socket_returns(data):
 		"history":
 			var jsoned = parse_json(data[1])
 			if typeof(jsoned) == TYPE_DICTIONARY:
-				emit_signal("historydata",jsoned["h"])
+				if jsoned.has("h"):
+					emit_signal("historydata",jsoned["h"])
 		_:
 			print("unknown")
 			
@@ -346,7 +354,7 @@ func loadUserData():
 		token = content["usertoken"]
 		steem = content["steemaccount"]
 		postingkey = content["postingkey"]
-		set_openseed_account_status(token,'{"location":"0:1","chat":"Online"}')
+		set_openseed_account_status(token,'{"chat":"Online"}')
 		emit_signal("userLoaded")
 		
 	return content
@@ -535,4 +543,76 @@ func _on_OpenSeed_interface(type):
 	pass # Replace with function body.
 
 
+func get_image(url):
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	var data = '{'+appdefaults+',"act":"get_image","image":"'+url+'","thetype":"url","size":"low"}'
+	var response = get_from_socket(data)
+	return response
 
+func add_to_image_store(filename):
+	var response = '{"image":"exists"}'
+	if !image_store.has(filename):
+		var Imagetex = ImageTexture.new()
+		if imgfile.file_exists("user://cache/Img/"+filename):
+			imgfile.open("user://cache/Img/"+filename, File.READ)
+			var imagesize = imgfile.get_len()
+			if imagesize <= 3554421:
+				var buffer = imgfile.get_buffer(imagesize)
+				var err = Imagedata.load_png_from_buffer(buffer)
+				Imagedata.compress(0,0,90)
+				if str(Imagetex).split("[")[1].split(":")[0] == "ImageTexture":
+					Imagetex.create_from_image(Imagedata,0)
+					image_store[filename] = Imagetex
+			imgfile.close()
+		else:
+			print("retriving file")
+			#get_timage(OpenSeed.openseed,"8080",filename)
+		response = '{"image":"stored"}'
+	return response
+
+func get_from_image_store(name):
+	var response
+	if image_store.has(name):
+		response = image_store[name]
+		
+	return response
+
+func set_image(songImage):
+	var Imagetex = ImageTexture.new()
+	OpenSeed.add_to_image_store(songImage)
+	if imgfile.file_exists("user://cache/Img/"+songImage):
+		imgfile.open("user://cache/Img/"+songImage, File.READ)
+		var imagesize = imgfile.get_len()
+		if imagesize <= 3554421:
+			var buffer = imgfile.get_buffer(imagesize)
+			var err = Imagedata.load_png_from_buffer(buffer)
+			Imagedata.compress(0,0,90)
+			if err != OK:
+				Imagetex = noimage
+			else:
+				if str(Imagetex).split("[")[1].split(":")[0] == "ImageTexture":
+					Imagetex.create_from_image(Imagedata,0)
+		else:
+			print(songImage)
+			print("too big")
+			print(imagesize)
+			Imagetex = noimage
+		imgfile.close()
+	else:
+		Imagetex = noimage
+		get_timage(OpenSeed.openseed,"8080",songImage)
+			
+	return Imagetex
+
+func get_timage(url,port,thefile):
+		var _postImg = thefile
+		$HTTPRequest.set_download_file("user://cache/Img/"+thefile)
+		var headers = [
+			"User-Agent: Pirulo/1.0 (Godot)",
+			"Accept: */*"
+		]
+		$HTTPRequest.request("http://"+str(url)+":"+str(port)+"/ipfs/"+str(thefile),headers,false,HTTPClient.METHOD_GET)
+
+func _on_HTTPRequest_request_completed(_result, _response_code, _headers, _body):
+	add_to_image_store($HTTPRequest.get_download_file())
+	pass # Replace with function body.

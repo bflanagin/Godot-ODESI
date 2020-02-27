@@ -283,3 +283,4 @@ margin_bottom = 69.0
 [connection signal="interface" from="." to="." method="_on_OpenSeed_interface"]
 [connection signal="new_tracks" from="." to="." method="_on_OpenSeed_new_tracks"]
 [connection signal="socket_returns" from="." to="." method="_on_OpenSeed_socket_returns"]
+[connection signal="request_completed" from="HTTPRequest" to="." method="_on_HTTPRequest_request_completed"]

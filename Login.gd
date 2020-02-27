@@ -32,7 +32,6 @@ func _on_New_pressed():
 
 func _on_Okay_pressed():
 	var response = OpenSeed.verify_account(username,passphrase)
-	print(response)
 	match response:
 		'{"user":"denied"}':
 			$notification.text = response
@@ -44,6 +43,7 @@ func _on_Okay_pressed():
 			if len(OpenSeed.token) < 2:
 				OpenSeed.token = parse_json(response)["user"]
 			OpenSeed.username = username
+			OpenSeed.steem = parse_json(response)["steem"]
 			OpenSeed.saveUserData()
 			self.hide()
 			
