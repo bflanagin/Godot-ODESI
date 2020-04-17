@@ -10,6 +10,7 @@ var highlight = false
 #var loadAnimDone = false
 var OpenSeed
 
+# warning-ignore:unused_signal
 signal refresh()
 # Called when the node enters the scene tree for the first time.
 func _ready():

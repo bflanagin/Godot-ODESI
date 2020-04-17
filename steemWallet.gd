@@ -7,6 +7,7 @@ extends Control
 var profile
 var thetrack 
 var OpenSeed 
+# warning-ignore:unused_signal
 signal download(track)
 
 # Called when the node enters the scene tree for the first time.

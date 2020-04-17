@@ -1,0 +1,165 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=1]
+[ext_resource path="res://OpenSeed-Godot/avatar-default-symbolic.svg" type="Texture" id=2]
+[ext_resource path="res://OpenSeed-Godot/Fonts/subtitle.tres" type="DynamicFont" id=3]
+[ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=4]
+[ext_resource path="res://OpenSeed-Godot/Fonts/NaviFont.tres" type="DynamicFont" id=5]
+[ext_resource path="res://OpenSeed-Godot/Request.gd" type="Script" id=6]
+
+[node name="Request" type="Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 20.0
+margin_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 400, 500 )
+theme = ExtResource( 1 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="shadow" type="Panel" parent="."]
+modulate = Color( 0.192157, 0.184314, 0.184314, 0.254902 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 15.8668
+margin_top = 12.6935
+margin_right = 15.8668
+margin_bottom = 12.6935
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 400, 500 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="TextureRect" type="TextureRect" parent="Panel"]
+self_modulate = Color( 1, 1, 1, 0.0627451 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 7.0
+margin_top = -1.75812
+margin_right = -9.00003
+margin_bottom = -1.75815
+texture = ExtResource( 4 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Reject" type="Button" parent="."]
+anchor_left = 0.0216632
+anchor_top = 0.89592
+anchor_right = 0.244164
+anchor_bottom = 0.98192
+margin_left = -0.000273705
+margin_top = -0.959778
+margin_right = -0.000282288
+margin_bottom = -3.95978
+text = "Reject"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": true
+}
+
+[node name="Accept" type="Button" parent="."]
+anchor_left = 0.732064
+anchor_top = 0.895335
+anchor_right = 0.972065
+anchor_bottom = 0.975335
+margin_left = 0.000274658
+margin_top = -0.667297
+margin_right = 0.000274658
+margin_bottom = -0.667297
+grow_horizontal = 0
+grow_vertical = 0
+text = "Accept"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": true
+}
+
+[node name="Later" type="Button" parent="."]
+anchor_left = 0.39
+anchor_top = 0.891568
+anchor_right = 0.61
+anchor_bottom = 0.971568
+margin_top = 1.21591
+margin_bottom = 1.21591
+grow_horizontal = 2
+grow_vertical = 2
+text = "Latter"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": true
+}
+
+[node name="Name" type="Label" parent="."]
+anchor_right = 1.0
+margin_top = 302.981
+margin_right = -3.05176e-05
+margin_bottom = 348.981
+custom_fonts/font = ExtResource( 5 )
+text = "User Name"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -128.0
+margin_top = 21.5478
+margin_right = 128.0
+margin_bottom = 277.548
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 256, 256 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="."]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_top = 109.441
+margin_right = -3.05176e-05
+margin_bottom = 134.441
+custom_fonts/font = ExtResource( 3 )
+text = "Wants to form a link with you"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="Reject" to="." method="_on_Reject_pressed"]
+[connection signal="pressed" from="Accept" to="." method="_on_Accept_pressed"]
+[connection signal="pressed" from="Later" to="." method="_on_Later_pressed"]
