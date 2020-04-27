@@ -1,5 +1,4 @@
 extends Control
-
 var OpenSeed
 var username = ""
 var passphrase = ""
@@ -25,10 +24,8 @@ func verify_account(data):
 		match data["token"]:
 			'denied':
 				$notification.text = "Incorrect username/password"
-				emit_signal("login",0)
 			'none':
 				$notification.text = "No User Found"
-				emit_signal("login",-1)
 			_:
 				$notification.text = "granted" 
 				emit_signal("login",1)
@@ -50,10 +47,18 @@ func _on_NewAccount_pressed():
 
 
 func _on_HiveAccount_pressed():
-	get_parent().get_node("HiveLogin").visible = true
-	self.hide()
+	pass # Replace with function body.
 
+
+func _on_PrivateKey_text_entered(new_text):
+	pass # Replace with function body.
+
+
+func _on_PrivateKey_text_changed(new_text):
+	pass # Replace with function body.
 
 
 func _on_Cancel_pressed():
 	self.hide()
+	OpenSeed.get_node("CanvasLayer/Login").show()
+	pass # Replace with function body.

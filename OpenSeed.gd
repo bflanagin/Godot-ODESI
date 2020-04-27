@@ -33,6 +33,7 @@ var online = true
 var mode = "socket"
 var keys = []
 var waiting = false
+var debug = false
 
 #var threadedServer = StreamPeerTCP.new()
 #var threadedServerInternal = StreamPeerTCP.new()
@@ -75,10 +76,13 @@ signal comment(info)
 
 signal socket_returns(data)
 
+signal accountdata(data)
+signal profiledata(data)
 signal chatdata(data)
 signal sent_chat(data)
 signal chat_history(data)
 signal new_chat()
+signal keydata(data)
 signal conversations(data)
 signal connections(data)
 signal user_status(data)
@@ -95,7 +99,8 @@ signal new_artists(data)
 signal queue_updated(data)
 signal historydata(data)
 # warning-ignore:unused_signal
-signal imagestored()
+signal imagestored(data)
+signal image_data(data)
 
 # warning-ignore:unused_signal
 signal update_loop(last)
@@ -125,21 +130,36 @@ func _ready():
 func update_loop():
 	if OpenSeed.token:
 		if send_queue.size() > 0:
-			command("queue","")
+			openSeedRequest("queue",[])
 			waiting = true
 		else:
-			command("getConversations","")
+			openSeedRequest("getConversations",[])
+			waiting = true
+	else:
+		if send_queue.size() > 0:
+			openSeedRequest("queue",[])
 			waiting = true
 				
 func send(data,priority):
-	
 	var checked = parse_json(data)
 	if typeof(checked) == TYPE_DICTIONARY: 
 		match priority:
 			1:
 				if send_queue.find(data) == -1:
 					if send_queue.size() >= 1:
+						send_queue.insert(0,data)
+					else:
+						send_queue.append(data)
+			2:
+				if send_queue.find(data) == -1:
+					if send_queue.size() >= 1:
 						send_queue.insert(1,data)
+					else:
+						send_queue.append(data)
+			3:
+				if send_queue.find(data) == -1:
+					if send_queue.size() >= 2:
+						send_queue.insert(2,data)
 					else:
 						send_queue.append(data)
 			6:
@@ -148,87 +168,130 @@ func send(data,priority):
 			_:
 				if send_queue.find(data) == -1:
 					send_queue.append(data)
+	else:
+		print("json error")
 	return 1
 
-func command(type,data):
-	match mode:
-		"socket":
-			match type:
-				"loadUser":
-					print("Loading user")
-					loadUserData()
-				"loadProfile":
-					loadUserProfile(data)
-				"history":
-					get_history(data)
-				"updateStatus":
-					set_openseed_account_status(OpenSeed.token,data)
-				"getStatus":
-					get_openseed_account_status(data)
-				"getRequests":
-					if !thread.is_active():
-						print("getting Requests")
-				"getConversations":
-					get_conversations()
-				"newtracks":
-					send('{"act":"newtracks_json","appPub":"'+str(OpenSeed.appPub)+'","devPub":"'+str(OpenSeed.devPub)+'"}',6)
-				"newartists":
-					print(type)
-					send('{"act":"newmusicians","appPub":"'+str(OpenSeed.appPub)+'","devPub":"'+str(OpenSeed.devPub)+'"}',6)
-				"queue":
-					if !thread.is_active():
-						thread.start(OpenSeed,"get_from_socket_threaded",[send_queue[0],"queued_event"])
+func openSeedRequest(type,data):
+	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+	match type:
+		
+		# Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
+		"verify_account":
+			send('{"act":"account_check",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'"}',1)
+			
+		# Creates user based on the provided information. This user is added to the Openseed service. 
+		"create_user":
+			send('{"act":"create_account",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'","email":"'+data[2]+'" }',1)
+			
+		"loadUser":
+			loadUserData()
+			
+		"getProfile":
+			send('{"act":"get_profile",'+appdefaults+',"account":"'+data[0]+'"}',1)
+			
+		"loadProfile":
+			loadUserProfile(data[0])
+			
+		"history":
+			if OpenSeed.token != "" and data[0] != "":
+				send('{"act":"get_history",'+appdefaults+',"account":"'+data[0]+'","apprange":"'+data[1]+'","count":"'+data[2]+'"}',3)
+				
+		"get_image":
+			send('{'+appdefaults+',"act":"get_image","image":"'+data[0]+'","thetype":"url","quality":"'+data[1]+'"}',3)
+			
+				
+		"updateStatus":
+			if OpenSeed.token != "":
+				send('{"act":"set_status",'+appdefaults+',"token":"'+OpenSeed.token+'","status":'+data[0]+'}',2)
+				
+		"getStatus":
+			if OpenSeed.token != "" and data[0] != "":
+				send('{"act":"get_status",'+appdefaults+',"account":"'+data[0]+'"}',6)
+				
+		###################
+		#
+		# Social Functions
+		#
+		###################
+				
+		"getRequests":
+			if !thread.is_active():
+				print("getting Requests")
+				
+		"get_key":
+			send('{"act":"get_key",'+appdefaults+',"thetype":"1","room":"'+data[1]+'","users":"'+data[0]+'","token":"'+OpenSeed.token+'"}',1)
+			
+		"get_room_by_attendees":
+			send('{"act":"find_room_by_attendees",'+appdefaults+',"token":"'+OpenSeed.token+'","attendees":"'+str(data)+'","create":"1"}',1)
+			
+		"get_chat_history":
+			send('{"act":"get_chat_history",'+appdefaults+',"token":"'+OpenSeed.token+'","room":"'+data[0]+'","count":"'+str(data[1])+'","last":"'+str(data[2])+'"}',1)
+			
+		"get_chat":
+			if data[0]:
+				send('{"act":"get_chat",'+appdefaults+',"token":"'+OpenSeed.token+'","room":"'+data[0]+'","last":"'+str(data[1])+'"}',1)
+				
+		"getConversations":
+			send('{"act":"get_conversations",'+appdefaults+',"token":"'+OpenSeed.token+'"}',3)
+			
+		"get_connections":
+			if data[0] != "":
+				send('{"act":"get_connections",'+appdefaults+',"account":"'+data[0]+'","hive":true}',1)
+				
+		##################
+		#
+		# Music functions
+		#
+		##################
+		
+		"get_genres":
+			send('{"act":"get_genres",'+appdefaults+'}',6)
+			
+		"get_genre":
+			send('{"act":"get_genre",'+appdefaults+',"genre":"'+data[0]+'","count":"0"}',6)
+			
+		"get_new_tracks":
+			send('{"act":"get_new_tracks",'+appdefaults+'}',6)
+			
+		"get_new_musicians":
+			send('{"act":"get_new_musicians",'+appdefaults+'}',6)
+			
+		
+		####################
+		#
+		# Hive Functions
+		#
+		####################
+		
+		"get_hive_account":
+			send('{"act":"get_hive_account",'+appdefaults+',"account":"'+data[0]+'"}',3)
+			
+		"get_hive_post":
+			send('{"act":"get_hive_post",'+appdefaults+',"author":"'+data[0]+'","permlink":"'+data[1]+'"}',4)
+		
+		"set_hive_follow":
+			send('{"act":"follow",'+appdefaults+',"hiveaccount":"'+data[0]+'","follow":"'+data[1]+'"}',4)
+			
+		"send_hive_tokens":
+			send('{"act":"payment",'+appdefaults+',"hiveaccount":"'+data[0]+'","amount":"'+data[1]+'","to":"'+data[2]+'","for":"'+data[3]+'"}',4)
+			
+		"send_hive_like":
+			send('{"act":"like",'+appdefaults+',"hiveaccount":"'+data[0]+'","post":"'+data[1]+'"}',2)
+			
+		"send_hive_comment":
+			send('{"act":"comment",'+appdefaults+',"account":"'+data[0]+'","comment":"'+data[1]+'","post":"'+data[2]+'"}',2)
+			
+		"queue":
+			if mode == "socket":
+				if !thread.is_active():
+					thread.start(OpenSeed,"get_from_socket_threaded",[send_queue[0],"queued_event"])
+					
+			if mode == "web":
+				pass
+			if mode == "websocket":
+				pass
 						
-# Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
-func verify_account(u,p):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var data = '{"act":"accountcheck",'+appdefaults+',"username":"'+str(u)+'","passphrase":"'+str(p)+'"}'
-	var response = get_from_socket(str(data))
-	return response
-	
-# Creates user based on the provided information. This user is added to the Openseed service. 
-func create_user(u,p,e):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var response = get_from_socket('{"act":"create",'+appdefaults+',"username":"'+str(u)+'","passphrase":"'+str(p)+'","email":"'+str(e)+'" }')
-	return response
-
-# Links steem account to openseed account for future functions.
-func hive_link(u):
-	var response = get_from_socket('{"act":"link",'+appdefaults+',"steemname":"'+str(u)+'","username":"'+str(username)+'"}')
-	return response
-
-func get_hive_account(account):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var profile = get_from_socket('{"act":"getaccount",'+appdefaults+',"account":"'+account+'"}')
-	return parse_json(profile)
-
-func get_full_hive_account(account):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var profile = get_from_socket('{"act":"getfullaccount",'+appdefaults+',"account":"'+account+'"}')
-	return profile
-	
-func get_from_socket(data):
-# warning-ignore:unused_variable
-	var fullreturn = ""
-	var _timeout = 18000
-	if !server.is_connected_to_host():
-		server.connect_to_host(openseed, 8688)
-		while server.get_status() != 2:
-			_timeout -= 1
-	if server.is_connected_to_host():
-		if server.get_status() == 2:
-			server.put_data(data.to_utf8())
-			var fromserver = server.get_data(1)
-			var size = server.get_available_bytes()
-			var therest = server.get_data(size)
-			fullreturn = fromserver[1].get_string_from_utf8() + therest[1].get_string_from_utf8()
-		server.disconnect_from_host()
-		if fullreturn[-1] != "}":
-			var last_brach = fullreturn.find_last("}")
-			return fullreturn.substr(0,last_brach)
-		else:
-			return (fullreturn)
-	
 func get_from_socket_threaded(data):
 # warning-ignore:unused_variable
 	var fullreturn = ""
@@ -265,69 +328,107 @@ func returned_from_socket(type):
 func _on_OpenSeed_socket_returns(data):
 	var jsoned 
 	if data[1]:
-		match data[0]:
-			"profile":
-				print("getting Profile")
-				jsoned = parse_json(data[1])
-				if typeof(jsoned) == TYPE_DICTIONARY:
+		jsoned = parse_json(data[1])
+		if typeof(jsoned) == TYPE_DICTIONARY:
+			retried = 0
+			
+			if jsoned.has("profile"):
+				#print(jsoned["profile"])
+				if OpenSeed.profile_name == "":
 					saveUserProfile(data[1])
-					
-			"queued_event":
-				jsoned = parse_json(data[1])
-				if typeof(jsoned) == TYPE_DICTIONARY:
-					retried = 0
-					if jsoned.has("chat_response"):
-						emit_signal("sent_chat",data[1])
-						
-					if jsoned.has("history"):
-						emit_signal("historydata",jsoned["history"])
-						
-					if jsoned.has("chat"):
-						emit_signal("chatdata",jsoned["chat"])
-						
-					if jsoned.has("chat_history"):
-						emit_signal("chat_history",jsoned["chat_history"])
-						
-					if jsoned.has("conversations"):
-						if str(conversations) != str(jsoned["conversations"]):
-							emit_signal("new_chat")
-							conversations = jsoned["conversations"]
-						emit_signal("conversations",conversations)
-							
-					if jsoned.has("newtracks"):
-						emit_signal("new_tracks",jsoned["newtracks"])
-						
-					if jsoned.has("newartitsts"):
-						emit_signal("new_artists",jsoned["newartists"])
-					
-					if jsoned.has("genre_tracks"):
-						emit_signal("tracks",jsoned["genre_tracks"])
-					
-					if jsoned.has("genres"):
-						emit_signal("genres",jsoned["genres"])
-						
-					if jsoned.has("status"):
-						emit_signal("user_status",[jsoned["status"]["data"]["chat"],jsoned["status"]["account"]])
-						
-					if jsoned.has("request"):
-						emit_signal("request_status",[jsoned["request"],jsoned["account"]])
-					
-					if jsoned.has("connections"):
-						emit_signal("connections",jsoned["connections"])
-						
-					send_queue.remove(0)
 				else:
-					if retried == retry:
-						#print("retried:"+str(retried))
-						#print("removing bad call")
-						#print(send_queue[0])
-						send_queue.remove(0)
-					else:
-						#print(send_queue[0])
-						#print(data[1])
-						retried += 1
-			_:
-				print("unknown")
+					emit_signal("profiledata",[jsoned["profile"]["username"],jsoned["profile"]])
+			
+			if jsoned.has("account"):
+				emit_signal("accountdata",jsoned["account"])
+				
+			if jsoned.has("hive"):
+				if jsoned["hive"].has("profile"):
+					emit_signal("profiledata",[jsoned["username"],jsoned["hive"]])
+				if jsoned["hive"].has("app"):
+					emit_signal("profiledata",[jsoned["username"],jsoned["hive"]["app"]])
+					
+			if jsoned.has("history"):
+				emit_signal("historydata",jsoned["history"])
+					
+			if jsoned.has("chat_response"):
+				emit_signal("sent_chat",data[1])
+					
+			if jsoned.has("image"):
+				emit_signal("image_data",jsoned["image"])
+				add_to_image_store(jsoned["image"]["source"],jsoned["image"]["quality"],jsoned["image"]["hash"])
+					
+				########
+				#
+				# Chat
+				#
+				########
+						
+			if jsoned.has("chat"):
+				emit_signal("chatdata",jsoned["chat"])
+						
+			if jsoned.has("chat_history"):
+				emit_signal("chat_history",jsoned["chat_history"])
+						
+			if jsoned.has("conversations"):
+				if str(conversations) != str(jsoned["conversations"]):
+					emit_signal("new_chat")
+					conversations = jsoned["conversations"]
+					emit_signal("conversations",conversations)
+					
+			if jsoned.has("key"):
+				emit_signal("keydata",jsoned["key"])
+						
+				########
+				#
+				# Music
+				#
+				########
+				
+			if jsoned.has("newtracks"):
+				emit_signal("new_tracks",jsoned["newtracks"])
+						
+			if jsoned.has("new_musicians"):
+				emit_signal("new_artists",jsoned["new_musicians"])
+					
+			if jsoned.has("genre_tracks"):
+				emit_signal("tracks",jsoned["genre_tracks"])
+					
+			if jsoned.has("genres"):
+				emit_signal("genres",jsoned["genres"])
+						
+				########
+				#
+				# Social
+				#
+				########
+				
+			if jsoned.has("status"):
+				emit_signal("user_status",[jsoned["status"]["data"]["chat"],jsoned["status"]["account"]])
+						
+			if jsoned.has("request"):
+				emit_signal("request_status",[jsoned["request"],jsoned["account"]])
+					
+			if jsoned.has("connections"):
+				emit_signal("connections",jsoned["connections"])
+			
+			if debug == true:
+				print("finished "+send_queue[0])
+				
+			send_queue.remove(0)
+			
+		else:
+			if retried == retry:
+				#print("retried:"+str(retried))
+				#print("removing bad call")
+				if parse_json(send_queue[0])["act"] != "get_key":
+					print(send_queue[0])
+					send_queue.remove(0)
+			else:
+				#if parse_json(send_queue[0])["act"] == "verify_account":
+				#	print(data[1])
+				#print(data[1])
+				retried += 1
 				
 func _on_link_linked():
 	
@@ -338,33 +439,24 @@ func _on_link_linked():
 # Note the need for a steem account (called steem) and a postingkey. As a developer you have the choice to use your own postingKey or require the user to use theirs. 
 # a small fee 0.001 STEEM is required to post the memo on openseeds account to store the information on the chain. 
 
-func update_leaderboard(u,d):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var dataformat = '{\\"'
-	var datapoint = 0
-	while datapoint < len(d):
-		var repoint = d[datapoint].split(":")[0]+'\\":\\"'+d[datapoint].split(":")[1]
-		dataformat = str(dataformat)+str(repoint)
-		if datapoint+1 < len(d):
-			dataformat = str(dataformat)+'\\",\\"'
-		datapoint += 1
-	dataformat = dataformat+'\\"}'
-	var response = get_from_socket('{"act":"toleaderboard",'+appdefaults+',"username":"'+str(u)+'","data":"'+str(dataformat)+'","steem":"'+str(dev_steem)+'","postingkey":"'+str(dev_postingkey)+'"}')
-	return response
+#func update_leaderboard(u,d):
+#	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+#	var dataformat = '{\\"'
+#	var datapoint = 0
+#	while datapoint < len(d):
+#		var repoint = d[datapoint].split(":")[0]+'\\":\\"'+d[datapoint].split(":")[1]
+#		dataformat = str(dataformat)+str(repoint)
+#		if datapoint+1 < len(d):
+#			dataformat = str(dataformat)+'\\",\\"'
+#		datapoint += 1
+#	dataformat = dataformat+'\\"}'
+#	var response = get_from_socket('{"act":"toleaderboard",'+appdefaults+',"username":"'+str(u)+'","data":"'+str(dataformat)+'","steem":"'+str(dev_steem)+'","postingkey":"'+str(dev_postingkey)+'"}')
+#	return response
 	
 # warning-ignore:unused_argument
-func get_leaderboard(number):
-	var scores = get_from_socket('{"act":"getleaderboard",'+appdefaults+'}')
-	return scores
-	
-func get_history(account):
-	var data = '{"act":"get_history",'+ \
-				'"appPub":"'+str(appPub)+'",'+ \
-				'"devPub":"'+str(devPub)+'",'+ \
-				'"account":"'+str(account)+'",'+ \
-				'"apprange":"all",'+ \
-				'"count":"10"}'
-	send(data,3)
+#func get_leaderboard(number):
+#	var scores = get_from_socket('{"act":"getleaderboard",'+appdefaults+'}')
+#	return scores
 	
 func set_history(action_type,action):
 	var act = ""
@@ -421,7 +513,6 @@ func saveUserProfile(data):
 	file.close()
 	
 func loadUserProfile(account):
-	#send_file("image","test")
 	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
 	var file = File.new()
 	var profile
@@ -431,23 +522,24 @@ func loadUserProfile(account):
 		if content:
 			profile_name = content["openseed"]["name"]
 			profile_about = content["extended"]["about"]
-			profile_image = content["imports"]["profile"]["profile_image"]
+			if content["extended"].has("profile_img"):
+				profile_image = content["extended"]["profile_img"]
+			else:
+				profile_image = ""
 			profile_email = content["openseed"]["email"]
 			profile_phone = content["openseed"]["phone"]
 			emit_signal("userLoaded")
 		else:
 			print("no profile found")
 			if !thread.is_active():
-				#thread.start(self,"get_from_socket_threaded", ['{"act":"openseed_profile",'+appdefaults+',"account":"'+account+'"}',"profile"])
-				profile =get_from_socket('{"act":"get_profile",'+appdefaults+',"account":"'+account+'"}')
-				emit_signal("socket_returns",["profile",profile])
+				openSeedRequest("getProfile",[account])
+				#emit_signal("socket_returns",["profile",profile])
 		file.close()
 	else:
 		print("no profile found")
 		if !thread.is_active():
-			#thread.start(self,"get_from_socket_threaded", ['{"act":"openseed_profile",'+appdefaults+',"account":"'+account+'"}',"profile"])
-			profile = get_from_socket('{"act":"get_profile",'+appdefaults+',"account":"'+account+'"}')
-			emit_signal("socket_returns",["profile",profile])
+			openSeedRequest("getProfile",[account])
+			#emit_signal("socket_returns",["profile",profile])
 			
 	return profile_name
 	
@@ -463,26 +555,10 @@ func loadUserData():
 		token = content["usertoken"]
 		steem = content["steemaccount"]
 		postingkey = content["postingkey"]
-		set_openseed_account_status(token,'{"chat":"Online"}')
+		openSeedRequest("updateStatus",['{"chat":"Online"}'])
 		emit_signal("userLoaded")
 		
 	return content
-
-func send_tokens(amount,to,what):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var response = get_from_socket('{"act":"payment",'+appdefaults+',"steemaccount":"'+str(steem)+'","amount":"'+str(amount)+'","to":"'+str(to)+'","for":"'+str(what)+'"}')
-	return response
-
-func send_like(post):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var response = get_from_socket('{"act":"like",'+appdefaults+',"steemaccount":"'+str(steem)+'","post":"'+post+'"}')
-	return response
-
-func send_comment(account,comment,post):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var response = get_from_socket('{"act":"comment",'+appdefaults+',"account":"'+account+'","comment":"'+comment+'","post":"'+post+'"}')
-	return response
-
 
 func check_ipfs():
 	var ipfs_output = []
@@ -506,32 +582,15 @@ func check_ipfs():
 # Social Functions (Profiles, Requests, Connections, etc,)
 #
 ###########################################################################
-
-func get_connections(account):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var connections = '{"act":"openseed_connections",'+appdefaults+',"account":"'+account+'","hive":true}'
-	send(connections,6)
-	
-func follow(user):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var response = get_from_socket('{"act":"follow",'+appdefaults+',"steemaccount":"'+str(steem)+'","follow":"'+user+'"}')
-	return response
 	
 func get_openseed_account(account):
 	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var data = get_from_socket('{"act":"get_profile",'+appdefaults+',"account":"'+account+'"}')
-	var profile = parse_json(data)
-	return profile["profile"]
+	openSeedRequest("getProfile",[account])
 	
 func get_openseed_account_status(account):
 	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
 	var status = '{"act":"get_status",'+appdefaults+',"account":"'+account+'"}'
 	send(status,6)
-	
-func set_openseed_account_status(account_id,data):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var status = parse_json(get_from_socket('{"act":"set_status",'+appdefaults+',"token":"'+account_id+'","status":'+data+'}'))
-	return status
 	
 ###########################################################################
 #
@@ -539,29 +598,15 @@ func set_openseed_account_status(account_id,data):
 #
 ###########################################################################
 
-func get_conversations():
-	var command = '{"act":"get_conversations","appPub":"'+ \
-					str(appPub)+'","devPub":"'+str(devPub)+ \
-					'","token":"'+OpenSeed.token+'"}'
-	send(command,5)
-# warning-ignore:shadowed_variable
-func get_chat(room,last):
-	var command = '{"act":"get_chat","appPub":"'+ \
-					str(appPub)+'","devPub":"'+str(devPub)+ \
-					'","token":"'+OpenSeed.token+ \
-					'","room":"'+str(room)+'","last":"'+str(last)+'"}'
-	if room:
-		send(command,1)
-		
 func create_chatroom(title,attendees):
 	var command = '{"act":"create_chatroom","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
 					'","token":"'+OpenSeed.token+'","title":"'+str(title)+'","attendees":"'+attendees+'"}'
 	send(command,3)
 
-func find_room_by_attendess(attendees):
-	var command = parse_json(get_from_socket('{"act":"find_room_by_attendees","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
-					'","token":"'+OpenSeed.token+'","attendees":"'+attendees+'","create":"1"}'))
-	return command
+#func find_room_by_attendess(attendees):
+#	var command = parse_json(get_from_socket('{"act":"find_room_by_attendees","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
+#					'","token":"'+OpenSeed.token+'","attendees":"'+attendees+'","create":"1"}'))
+#	return command
 	
 # warning-ignore:shadowed_variable
 func send_chat(message,room):
@@ -570,12 +615,6 @@ func send_chat(message,room):
 	send(command,1)
 	return "queued"
 				
-func get_chat_history(room,count,last):
-	var command = '{"act":"get_chat_history","appPub":"'+ \
-					str(appPub)+'","devPub":"'+str(devPub)+ \
-					'","token":"'+OpenSeed.token+ \
-					'","room":"'+str(room)+'","count":"'+str(count)+'","last":"'+str(last)+'"}'
-	send(command,1)
 
 ##############################################################################
 #
@@ -597,7 +636,7 @@ func set_request(account,response):
 	send(command,1)
 
 func get_request_status(account):
-	var command = '{"act":"request_status","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
+	var command = '{"act":"get_request_status","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
 					'","token":"'+OpenSeed.token+'","account":"'+account+'"}'
 	send(command,6)
 
@@ -605,7 +644,6 @@ func get_request_status(account):
 func find_by_attendees(attendees):
 	var room = ""
 	for convo in conversations:
-		
 		var list = convo["attendees"].split(",")
 		for person in attendees:
 			var indx = 0
@@ -631,12 +669,9 @@ func get_keys_for(users,room):
 			break
 	if key == "":
 		appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-		var response = get_from_socket('{"act":"get_key",'+appdefaults+',"thetype":"1","room":"'+str(room)+'","users":"'+str(users)+'","token":"'+OpenSeed.token+'"}')
-		var jsoned = parse_json(response)
-		if typeof(jsoned) == TYPE_DICTIONARY:
-			if jsoned.has("key"):
-				key = jsoned["key"]
-				keys.append({"room":room,"key":key})
+		openSeedRequest("get_key",[users,room])
+	else:
+		emit_signal("keydata",{"code":key,"room":room})
 	return key
 
 func simp_crypt(key,raw_data):
@@ -743,22 +778,22 @@ func simp_decrypt(key,raw_data):
 #
 ##########################################
 
-func _on_OpenSeed_interface(type,data):
+func interface(type,show,data):
 	match type :
 		"login":
-			$CanvasLayer/Login.visible = true
+			$CanvasLayer/Login.visible = show
 			
 			$CanvasLayer/NewAccount.visible = false
 			$CanvasLayer/Request.visible = false
 			#$link.visible = false
-		"steem":
-			$CanvasLayer/SteemLink.visible = true
+		"hive":
+			$CanvasLayer/SteemLink.visible = show
 			
 			$CanvasLayer/Request.visible = false
 			$CanvasLayer/Login.visible = false
 			$CanvasLayer/NewAccount.visible = false
 		"request":
-			$CanvasLayer/Request.visible = true
+			$CanvasLayer/Request.visible = show
 			$CanvasLayer/Request.load_account(data)
 			$CanvasLayer/SteemLink.visible = false
 			$CanvasLayer/Login.visible = false
@@ -784,13 +819,14 @@ func _on_new_login(status):
 #
 #########################################################
 
-func get_image(url):
-	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-	var data = ['{'+appdefaults+',"act":"get_image","image":"'+url+'","thetype":"url","size":"low"}',"image"]
-	var response = get_from_socket(data[0])
-	return response
+#func get_image(url,quality):
+#	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
+#	var data = ['{'+appdefaults+',"act":"get_image","image":"'+url+'","thetype":"url","quality":"'+quality+'"}',"image"]
+#	var response = get_from_socket(data[0])
+	
+#	return response
 
-func add_to_image_store(filename):
+func add_to_image_store(source,quality,filename):
 	var response = '{"image":"exists"}'
 	if !image_store.has(filename):
 		var Imagetex = ImageTexture.new()
@@ -806,9 +842,11 @@ func add_to_image_store(filename):
 					image_store[filename] = Imagetex
 			imgfile.close()
 			response = '{"image":"stored"}'
+			emit_signal("imagestored",[source,filename])
 		else:
-			get_timage(OpenSeed.openseed,"8080",filename)
-			
+			response = '{"image":"fetching"}'
+			if filename != "No_Image_found":
+				get_timage(OpenSeed.openseed,"8080",filename)
 	return response
 
 func get_from_image_store(name):
@@ -819,14 +857,14 @@ func get_from_image_store(name):
 
 func set_image(songImage):
 	var Imagetex = ImageTexture.new()
-	OpenSeed.add_to_image_store(songImage)
+	OpenSeed.add_to_image_store(songImage,"medium",songImage)
 	if imgfile.file_exists("user://cache/Img/"+songImage):
 		imgfile.open("user://cache/Img/"+songImage, File.READ)
 		var imagesize = imgfile.get_len()
 		if imagesize <= 3554421:
 			var buffer = imgfile.get_buffer(imagesize)
 			var err = Imagedata.load_png_from_buffer(buffer)
-			Imagedata.compress(0,0,90)
+			#Imagedata.compress(0,0,90)
 			if err != OK:
 				Imagetex = noimage
 			else:
@@ -846,8 +884,8 @@ func set_image(songImage):
 
 func get_timage(url,port,thefile):
 		var _postImg = thefile
-		print("getting "+ thefile)
 		var http = HTTPRequest.new()
+		http.use_threads = true
 		self.add_child(http)
 		http.set_download_file("user://cache/Img/"+thefile)
 		var headers = [
@@ -855,7 +893,11 @@ func get_timage(url,port,thefile):
 			"Accept: */*",
 		]
 		http.request("http://"+str(url)+":"+str(port)+"/ipfs/"+str(thefile),headers,false,HTTPClient.METHOD_GET)
-		http.connect("request_completed",self,"_on_HTTPRequest_request_completed")
+		http.connect("request_completed",self,"image_download_complete")
+		
+func image_download_complete(result, response_code, headers, body):
+	print("image file downloaded")
+	pass
 		
 ####################################
 #
@@ -885,7 +927,7 @@ func music_play(track):
 	var Oggy = AudioStreamOGGVorbis.new()
 	emit_signal("audio","trackartist",track[1])
 	emit_signal("audio","tracktitle",track[2])
-	emit_signal("audio","trackart",get_image(track[3]))
+	#emit_signal("audio","trackart",get_image(track[3],"low"))
 	emit_signal("audio","playing",track[2])
 
 	var song = "user://cache/Music/"+track[0]
@@ -943,12 +985,10 @@ func _on_HTTPRequest_request_completed(_result, response_code, _headers, _body):
 	pass # Replace with function body.
 
 func _on_OpenSeed_new_tracks(_data):
-	OpenSeed.waiting = false
-	OpenSeed.retrieved = "newtracks"
+	pass
 	
 func _on_OpenSeed_new_artists(_data):
-	OpenSeed.retrieved = "newartists"
-	OpenSeed.waiting = false
+	pass
 	
 func _on_Timer_timeout():
 	pass # Replace with function body.
@@ -957,9 +997,7 @@ func _on_OpenSeed_update_loop(_last):
 	pass # Replace with function body.
 
 func _on_OpenSeed_conversations(_data):
-	OpenSeed.retrieved = "conversations"
-	OpenSeed.waiting = false
+	pass
 
 func _on_OpenSeed_queue_updated(_data):
-	OpenSeed.retrieved = "queue"
-	OpenSeed.waiting = false
+	pass

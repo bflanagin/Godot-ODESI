@@ -1,24 +1,24 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://OpenSeed-Godot/Login.gd" type="Script" id=1]
-[ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=2]
-[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=3]
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=1]
+[ext_resource path="res://OpenSeed-Godot/HiveLogin.gd" type="Script" id=2]
+[ext_resource path="res://OpenSeed-Godot/hextacular.svg" type="Texture" id=3]
 [ext_resource path="res://OpenSeed-Godot/Fonts/subtitle.tres" type="DynamicFont" id=4]
 
-[node name="Login" type="Control"]
+[node name="HiveLogin" type="Control"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -200.0
-margin_top = -267.5
-margin_right = 200.0
-margin_bottom = 267.5
+margin_left = -234.0
+margin_top = -316.0
+margin_right = 234.0
+margin_bottom = 316.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_min_size = Vector2( 468, 632 )
-theme = ExtResource( 3 )
-script = ExtResource( 1 )
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true,
 "_edit_use_anchors_": false
@@ -54,12 +54,12 @@ __meta__ = {
 anchor_left = 0.5
 anchor_right = 0.5
 margin_left = -95.5
-margin_top = 168.492
+margin_top = 154.112
 margin_right = 100.5
-margin_bottom = 197.492
+margin_bottom = 183.112
 grow_horizontal = 2
 grow_vertical = 2
-text = "OpenSeed Login"
+text = "Hive Import"
 align = 1
 valign = 1
 uppercase = true
@@ -69,20 +69,20 @@ __meta__ = {
 
 [node name="TextureRect" type="TextureRect" parent="."]
 self_modulate = Color( 1, 1, 1, 0.54902 )
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -71.5
-margin_top = 16.6118
-margin_right = 889.5
-margin_bottom = 902.612
+anchor_left = 0.347222
+anchor_top = 0.0167883
+anchor_right = 0.655235
+anchor_bottom = 0.227073
+margin_right = 816.85
+margin_bottom = 753.1
 grow_horizontal = 2
 grow_vertical = 2
 rect_scale = Vector2( 0.15, 0.15 )
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 expand = true
 stretch_mode = 6
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": true
 }
 
 [node name="Okay" type="Button" parent="."]
@@ -90,13 +90,13 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -87.8299
+margin_left = -88.9024
 margin_top = -52.0
-margin_right = -8.8299
+margin_right = -9.90237
 margin_bottom = -12.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "Login"
+text = "Import"
 __meta__ = {
 "_edit_lock_": true,
 "_edit_use_anchors_": false
@@ -121,20 +121,19 @@ __meta__ = {
 
 [node name="notification" type="Label" parent="."]
 anchor_left = 0.5
-anchor_top = 0.936
+anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -103.0
-margin_top = -13.76
-margin_right = 97.0
-margin_bottom = -14.0
+margin_left = -107.0
+margin_top = -47.5375
+margin_right = 107.0
+margin_bottom = -13.5375
 grow_horizontal = 2
 grow_vertical = 2
 custom_fonts/font = ExtResource( 4 )
 align = 1
 valign = 1
 autowrap = true
-clip_text = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -143,20 +142,18 @@ __meta__ = {
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 19.0
-margin_top = 184.425
+margin_top = 202.632
 margin_right = -20.0
-margin_bottom = -99.5754
-custom_constants/separation = 20
-alignment = 1
+margin_bottom = -83.3684
+custom_constants/separation = 18
 __meta__ = {
 "_edit_group_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="Username" type="LineEdit" parent="VBoxContainer"]
-margin_top = 44.0
 margin_right = 429.0
-margin_bottom = 84.0
+margin_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 max_length = 255
@@ -165,42 +162,74 @@ __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="Passphrase" type="LineEdit" parent="VBoxContainer"]
-margin_top = 104.0
+[node name="PrivateKey" type="LineEdit" parent="VBoxContainer"]
+margin_top = 58.0
 margin_right = 429.0
-margin_bottom = 144.0
+margin_bottom = 98.0
 grow_horizontal = 2
 grow_vertical = 2
 max_length = 255
 secret = true
-placeholder_text = "Passphrase"
+placeholder_text = "Private Key"
 __meta__ = {
 "_edit_use_anchors_": true
 }
 
 [node name="Label" type="Label" parent="VBoxContainer"]
-margin_top = 164.0
+margin_top = 116.0
 margin_right = 429.0
-margin_bottom = 183.0
+margin_bottom = 135.0
 custom_fonts/font = ExtResource( 4 )
-text = "-or-"
+text = "- OpenSeed Account Creation -"
+align = 1
+
+[node name="email" type="LineEdit" parent="VBoxContainer"]
+margin_top = 153.0
+margin_right = 429.0
+margin_bottom = 193.0
+placeholder_text = "Email Address (account recovery)"
+
+[node name="Passphrase" type="LineEdit" parent="VBoxContainer"]
+margin_top = 211.0
+margin_right = 429.0
+margin_bottom = 251.0
+placeholder_text = "Password / Passphrase for account"
+
+[node name="opts" type="Label" parent="VBoxContainer"]
+margin_top = 269.0
+margin_right = 429.0
+margin_bottom = 288.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_fonts/font = ExtResource( 4 )
+text = "Options:"
 align = 1
 valign = 1
 
-[node name="NewAccount" type="Button" parent="VBoxContainer"]
-margin_top = 203.0
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 306.0
 margin_right = 429.0
-margin_bottom = 243.0
-text = "New Account"
+margin_bottom = 346.0
+alignment = 1
 
-[node name="HiveAccount" type="Button" parent="VBoxContainer"]
-margin_top = 263.0
-margin_right = 429.0
-margin_bottom = 303.0
-text = "Import Hive Account"
+[node name="OpenSeed" type="CheckBox" parent="VBoxContainer/HBoxContainer"]
+margin_left = 57.0
+margin_right = 230.0
+margin_bottom = 40.0
+pressed = true
+text = "Import Profile"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="savekey" type="CheckBox" parent="VBoxContainer/HBoxContainer"]
+margin_left = 238.0
+margin_right = 371.0
+margin_bottom = 40.0
+text = "Save Key"
+flat = true
 [connection signal="pressed" from="Okay" to="." method="_on_Okay_pressed"]
 [connection signal="pressed" from="Cancel" to="." method="_on_Cancel_pressed"]
 [connection signal="text_changed" from="VBoxContainer/Username" to="." method="_on_Username_text_changed"]
-[connection signal="text_changed" from="VBoxContainer/Passphrase" to="." method="_on_Passphrase_text_changed"]
-[connection signal="pressed" from="VBoxContainer/NewAccount" to="." method="_on_NewAccount_pressed"]
-[connection signal="pressed" from="VBoxContainer/HiveAccount" to="." method="_on_HiveAccount_pressed"]
+[connection signal="text_changed" from="VBoxContainer/PrivateKey" to="." method="_on_PrivateKey_text_changed"]

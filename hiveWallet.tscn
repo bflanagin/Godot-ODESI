@@ -1,0 +1,234 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://OpenSeed-Godot/hiveWallet.gd" type="Script" id=1]
+[ext_resource path="res://OpenSeed-Godot/avatar-default-symbolic.svg" type="Texture" id=2]
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=3]
+
+[node name="hiveWallet" type="Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -470.0
+margin_top = -350.0
+margin_right = 470.0
+margin_bottom = 350.0
+rect_min_size = Vector2( 940, 700 )
+theme = ExtResource( 3 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="ProfileImg" type="TextureRect" parent="."]
+margin_left = 9.52261
+margin_top = 10.883
+margin_right = 105.523
+margin_bottom = 106.883
+rect_min_size = Vector2( 96, 96 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="Label" parent="."]
+margin_left = 120.0
+margin_top = 14.0
+margin_right = 272.0
+margin_bottom = 39.0
+text = "Name"
+valign = 1
+clip_text = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Discription" type="Label" parent="."]
+margin_left = 120.0
+margin_top = 45.0
+margin_right = 791.0
+margin_bottom = 102.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Discription"
+valign = 2
+autowrap = true
+clip_text = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="HSeparator" type="HSeparator" parent="."]
+anchor_right = 1.0
+margin_top = 120.0
+margin_bottom = 124.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Download" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 124.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Download"]
+anchor_left = 0.0170213
+anchor_top = 0.177083
+anchor_right = 0.981915
+anchor_bottom = 0.975694
+margin_left = 9.53674e-07
+grow_horizontal = 2
+grow_vertical = 2
+custom_constants/separation = 21
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": true
+}
+
+[node name="title" type="Label" parent="Download/VBoxContainer"]
+margin_right = 907.0
+margin_bottom = 29.0
+align = 1
+valign = 1
+
+[node name="HSeparator" type="HSeparator" parent="Download/VBoxContainer"]
+margin_top = 50.0
+margin_right = 907.0
+margin_bottom = 58.0
+
+[node name="Label" type="Label" parent="Download/VBoxContainer"]
+margin_top = 79.0
+margin_right = 907.0
+margin_bottom = 248.0
+text = "Thank you for showing your support of Hive  Musicians!
+
+Please enter the amount below you feel the artist deserves for their hard work. Note: 90% of the proceeds will go to the artist where 10% goes to maintain the software and services."
+autowrap = true
+
+[node name="payopts" type="HBoxContainer" parent="Download/VBoxContainer"]
+margin_top = 269.0
+margin_right = 907.0
+margin_bottom = 309.0
+rect_min_size = Vector2( 0, 32 )
+custom_constants/separation = 20
+alignment = 1
+
+[node name="payment" type="SpinBox" parent="Download/VBoxContainer/payopts"]
+margin_left = 204.0
+margin_right = 504.0
+margin_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 300, 0 )
+max_value = 999.0
+step = 0.01
+align = 1
+
+[node name="gratis" type="Label" parent="Download/VBoxContainer/payopts"]
+margin_left = 524.0
+margin_top = 5.0
+margin_right = 594.0
+margin_bottom = 34.0
+text = "Give:"
+
+[node name="OptionButton" type="OptionButton" parent="Download/VBoxContainer/payopts"]
+margin_left = 614.0
+margin_right = 702.0
+margin_bottom = 40.0
+text = "HIVE"
+items = [ "HIVE", null, false, 0, null, "HBD", null, false, 1, null ]
+selected = 0
+
+[node name="Control" type="Control" parent="Download"]
+anchor_left = 0.0175532
+anchor_top = 0.926126
+anchor_right = 0.982447
+anchor_bottom = 0.981682
+rect_min_size = Vector2( 0, 32 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="cancel" type="Button" parent="Download/Control"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -20.0
+margin_right = 71.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 79, 0 )
+text = "Cancel"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="download" type="Button" parent="Download/Control"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -66.0
+margin_top = -20.0
+margin_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 0
+rect_min_size = Vector2( 79, 0 )
+disabled = true
+text = "Tip"
+
+[node name="hive_amount" type="Label" parent="."]
+anchor_left = 0.0110617
+anchor_top = 0.180612
+anchor_right = 0.0876575
+anchor_bottom = 0.243469
+margin_right = -16.0
+margin_bottom = -15.0
+text = "0.00"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="hbd_amount" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -63.3684
+margin_top = 129.474
+margin_right = -7.36841
+margin_bottom = 158.474
+grow_horizontal = 0
+grow_vertical = 0
+text = "0.00"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 65.0
+margin_top = 2.7016
+margin_right = -56.0
+margin_bottom = -65.2984
+window_title = "Open a Directory"
+mode = 2
+access = 2
+current_dir = "/home/benjaminflanagin/Work/Thicket"
+current_path = "/home/benjaminflanagin/Work/Thicket/"
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+[connection signal="download" from="." to="." method="_on_steemWallet_download"]
+[connection signal="visibility_changed" from="." to="." method="_on_steemWallet_visibility_changed"]
+[connection signal="pressed" from="Download/Control/cancel" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="Download/Control/download" to="." method="_on_download_pressed"]
+[connection signal="dir_selected" from="FileDialog" to="." method="_on_FileDialog_dir_selected"]

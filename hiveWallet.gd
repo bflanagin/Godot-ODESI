@@ -13,16 +13,16 @@ signal download(track)
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	OpenSeed = get_node("/root/OpenSeed")
-	$Download/VBoxContainer/Control/download.text = "Tip"
+	$Download/Control/download.text = "Tip"
 	pass # Replace with function body.
 
 func _on_steemWallet_visibility_changed():
 	OpenSeed.loadUserData()
-	if visible and OpenSeed.steem:
-		profile = parse_json(OpenSeed.get_full_steem_account(OpenSeed.steem))
+	if visible and OpenSeed.hive:
+		profile = parse_json(OpenSeed.get_full_steem_account(OpenSeed.hive))
 		var metadata = parse_json(profile["json_metadata"])
-		$steem_amount.text = profile["balance"]
-		$sbd_amount.text = profile["sbd_balance"]
+		$hive_amount.text = profile["balance"]
+		$hbd_amount.text = profile["hbd_balance"]
 		$Name.text = metadata["profile"]["name"]
 		$Discription.text = metadata["profile"]["about"]
 

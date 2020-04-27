@@ -14,7 +14,7 @@ func load_account(account):
 	user = account 
 	profile = OpenSeed.get_openseed_account(account)
 	print(profile)
-	if profile.has("openseed"):
+	if profile and profile.has("openseed"):
 		$Name.text = profile["openseed"]["name"]
 	else:
 		$Name.text = account

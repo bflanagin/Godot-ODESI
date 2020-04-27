@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://OpenSeed-Godot/SteemLink.gd" type="Script" id=1]
-[ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=3]
+[ext_resource path="res://OpenSeed-Godot/HiveLink.gd" type="Script" id=1]
+[ext_resource path="res://OpenSeed-Godot/hextacular.svg" type="Texture" id=2]
 [ext_resource path="res://OpenSeed-Godot/Contact.tscn" type="PackedScene" id=4]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=5]
 
@@ -56,16 +56,16 @@ tracks/3/keys = {
 "values": [ Vector2( 62.322, 197.704 ), Vector2( 62.322, 255.12 ) ]
 }
 
-[node name="SteemLink" type="Control"]
+[node name="HiveLink" type="Control"]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -298.149
-margin_top = -200.0
-margin_right = 332.851
+margin_left = -298.0
+margin_top = -251.0
+margin_right = 332.0
 margin_bottom = 187.0
-rect_min_size = Vector2( 600, 300 )
+rect_min_size = Vector2( 630, 300 )
 theme = ExtResource( 5 )
 script = ExtResource( 1 )
 __meta__ = {
@@ -96,38 +96,38 @@ __meta__ = {
 }
 
 [node name="TextureRect" type="TextureRect" parent="."]
-self_modulate = Color( 1, 1, 1, 0.0117647 )
+self_modulate = Color( 1, 1, 1, 0.0431373 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 3.0
+margin_left = 8.0
 margin_top = 5.0
-margin_right = 3377.0
-margin_bottom = 1637.0
+margin_right = 3475.0
+margin_bottom = 2399.0
 grow_horizontal = 2
 grow_vertical = 2
 rect_scale = Vector2( 0.15, 0.15 )
-texture = ExtResource( 3 )
+texture = ExtResource( 2 )
 stretch_mode = 6
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="HSeparator" type="HSeparator" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -292.0
-margin_top = 41.4072
-margin_right = 291.0
-margin_bottom = 49.4072
+margin_left = -293.101
+margin_top = 68.734
+margin_right = 289.899
+margin_bottom = 76.734
 
 [node name="Label" type="Label" parent="."]
 anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -94.0
-margin_right = 94.0
-margin_bottom = 25.0
-text = "Steem Account"
+margin_left = -119.0
+margin_top = 23.327
+margin_right = 119.0
+margin_bottom = 52.327
+text = "Link Hive Account"
 align = 1
 valign = 1
 uppercase = true
@@ -142,7 +142,7 @@ margin_left = -239.0
 margin_top = 110.0
 margin_right = 229.0
 margin_bottom = 126.0
-text = "Please enter your steem account information below"
+text = "Please enter your Hive account information below"
 align = 1
 autowrap = true
 __meta__ = {
@@ -154,14 +154,24 @@ anchor_left = 0.1
 anchor_top = 0.54
 anchor_right = 0.9
 anchor_bottom = 0.59
-margin_left = -0.778046
-margin_top = -11.276
-margin_right = -1.1781
-margin_bottom = 14.3741
+margin_left = -0.678001
+margin_top = -38.816
+margin_right = -0.677979
+margin_bottom = -20.7159
 max_length = 255
 placeholder_text = "Username"
 __meta__ = {
 "_edit_use_anchors_": false
+}
+
+[node name="privatekey" type="LineEdit" parent="Username"]
+anchor_top = 1.35
+anchor_right = 1.0
+anchor_bottom = 2.35
+max_length = 255
+placeholder_text = "Private Key"
+__meta__ = {
+"_edit_use_anchors_": true
 }
 
 [node name="Link" type="Button" parent="."]
@@ -169,10 +179,11 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -92.0441
-margin_top = -41.1036
-margin_right = -23.0441
-margin_bottom = -4.10361
+margin_left = -92.5437
+margin_top = -50.1493
+margin_right = -23.5438
+margin_bottom = -10.1493
+rect_min_size = Vector2( 79, 0 )
 text = "Link"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -181,10 +192,11 @@ __meta__ = {
 [node name="Cancel" type="Button" parent="."]
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_left = 22.3986
-margin_top = -42.9543
-margin_right = 117.399
-margin_bottom = -5.95428
+margin_left = 21.899
+margin_top = -52.0
+margin_right = 100.899
+margin_bottom = -12.0
+rect_min_size = Vector2( 79, 0 )
 text = "Cancel"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -209,12 +221,16 @@ __meta__ = {
 [node name="text_timeout" type="Timer" parent="."]
 
 [node name="AccountView" type="Control" parent="."]
-modulate = Color( 1, 1, 1, 0.0186709 )
+visible = false
+modulate = Color( 1, 1, 1, 0 )
 anchor_right = 1.0
 margin_left = 7.0
-margin_top = 54.7378
+margin_top = 80.9103
 margin_right = -7.0
-margin_bottom = 193.738
+margin_bottom = 219.91
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="HBoxContainer" type="HBoxContainer" parent="AccountView"]
 anchor_right = 1.0
@@ -226,13 +242,13 @@ __meta__ = {
 
 [node name="Contact" parent="AccountView/HBoxContainer" instance=ExtResource( 4 )]
 margin_right = 128.0
-margin_bottom = 139.0
+margin_bottom = 138.0
 rect_min_size = Vector2( 128, 128 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="AccountView/HBoxContainer"]
 margin_left = 138.0
 margin_right = 563.0
-margin_bottom = 139.0
+margin_bottom = 138.0
 rect_min_size = Vector2( 425, 0 )
 
 [node name="Name" type="Label" parent="AccountView/HBoxContainer/VBoxContainer"]
@@ -260,6 +276,8 @@ max_lines_visible = 2
 anims/account_found = SubResource( 1 )
 [connection signal="text_changed" from="Username" to="." method="_on_Username_text_changed"]
 [connection signal="text_entered" from="Username" to="." method="_on_Username_text_entered"]
+[connection signal="text_changed" from="Username/privatekey" to="." method="_on_Username_text_changed"]
+[connection signal="text_entered" from="Username/privatekey" to="." method="_on_Username_text_entered"]
 [connection signal="pressed" from="Link" to="." method="_on_Link_pressed"]
 [connection signal="pressed" from="Cancel" to="." method="_on_Cancel_pressed"]
 [connection signal="timeout" from="text_timeout" to="." method="_on_text_timeout_timeout"]

@@ -1,11 +1,12 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.gd" type="Script" id=1]
 [ext_resource path="res://OpenSeed-Godot/Comment.tscn" type="PackedScene" id=2]
 [ext_resource path="res://OpenSeed-Godot/Login.tscn" type="PackedScene" id=3]
-[ext_resource path="res://OpenSeed-Godot/SteemLink.tscn" type="PackedScene" id=4]
-[ext_resource path="res://OpenSeed-Godot/steemWallet.tscn" type="PackedScene" id=5]
+[ext_resource path="res://OpenSeed-Godot/HiveLink.tscn" type="PackedScene" id=4]
+[ext_resource path="res://OpenSeed-Godot/hiveWallet.tscn" type="PackedScene" id=5]
 [ext_resource path="res://OpenSeed-Godot/Request.tscn" type="PackedScene" id=6]
+[ext_resource path="res://OpenSeed-Godot/HiveLogin.tscn" type="PackedScene" id=7]
 [ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=11]
 [ext_resource path="res://ColorStyleGuide.png" type="Texture" id=12]
@@ -17,6 +18,15 @@ script = ExtResource( 1 )
 use_threads = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HiveLink" parent="CanvasLayer" instance=ExtResource( 4 )]
+visible = false
+
+[node name="hiveWallet" parent="CanvasLayer" instance=ExtResource( 5 )]
+visible = false
+
+[node name="HiveLogin" parent="CanvasLayer" instance=ExtResource( 7 )]
+visible = false
 
 [node name="Comment" parent="CanvasLayer" instance=ExtResource( 2 )]
 visible = false
@@ -31,14 +41,8 @@ visible = false
 
 [node name="Login" parent="CanvasLayer" instance=ExtResource( 3 )]
 visible = false
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -200.0
-margin_top = -225.0
-margin_right = 200.0
-margin_bottom = 225.0
+margin_top = -275.298
+margin_bottom = 255.702
 
 [node name="NewAccount" parent="CanvasLayer" instance=ExtResource( 10 )]
 visible = false
@@ -50,24 +54,6 @@ margin_left = 0.0
 margin_top = 0.0
 margin_right = 0.0
 margin_bottom = -6.10352e-05
-theme = ExtResource( 11 )
-
-[node name="SteemLink" parent="CanvasLayer" instance=ExtResource( 4 )]
-visible = false
-
-[node name="steemWallet" parent="CanvasLayer" instance=ExtResource( 5 )]
-visible = false
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -470.0
-margin_top = -350.0
-margin_right = 470.0
-margin_bottom = 350.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource( 11 )
 
 [node name="musicInfo" type="Control" parent="CanvasLayer"]
 visible = false
@@ -138,7 +124,6 @@ texture = ExtResource( 12 )
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.2
 [connection signal="conversations" from="." to="." method="_on_OpenSeed_conversations"]
-[connection signal="interface" from="." to="." method="_on_OpenSeed_interface"]
 [connection signal="new_artists" from="." to="." method="_on_OpenSeed_new_artists"]
 [connection signal="new_tracks" from="." to="." method="_on_OpenSeed_new_tracks"]
 [connection signal="queue_updated" from="." to="." method="_on_OpenSeed_queue_updated"]
