@@ -30,10 +30,12 @@ var connection = ""
 # warning-ignore:unused_class_variable
 var output = ""
 var online = true
-var mode = "socket"
+#var mode = "socket"
+#var mode = "web"
+var mode = "websocket"
 var keys = []
 var waiting = false
-var debug = false
+export var debug = true
 
 #var threadedServer = StreamPeerTCP.new()
 #var threadedServerInternal = StreamPeerTCP.new()
@@ -87,6 +89,7 @@ signal conversations(data)
 signal connections(data)
 signal user_status(data)
 signal request_status(data)
+signal ChatMessageRecieved(data)
 
 signal tracks(data)
 signal genres(data)
@@ -111,6 +114,7 @@ var appdefaults
 
 var threadedServer = StreamPeerTCP.new()
 var server = StreamPeerTCP.new()
+var websocket = WebSocketClient.new()
 
 export var retry = 15
 var retried = 0
@@ -123,11 +127,30 @@ var retried = 0
 
 func _ready():
 	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
-# warning-ignore:return_value_discarded
+	
+	if mode == "websocket":
+		print("connecting websocket signals")
+		websocket.connect("connection_closed", self, "_closed")
+		websocket.connect("connection_error", self, "_closed")
+		websocket.connect("connection_established", self, "_connected")
+		# This signal is emitted when not using the Multiplayer API every time
+		# a full packet is received.
+		# Alternatively, you could check get_peer(1).get_available_packets() in a loop.
+		websocket.connect("data_received", self, "_on_data")
+		# Initiate connection to the given URL.
+		var err = websocket.connect_to_url("ws://"+openseed+":8765")
+		if err != OK:
+			print("Unable to connect")
+			set_process(false)
+	#if mode == "socket":
+		
+
+	# warning-ignore:return_value_discarded
 	$Timer.connect("timeout",self,"update_loop")
 	$Timer.start()
 
 func update_loop():
+			
 	if OpenSeed.token:
 		if send_queue.size() > 0:
 			openSeedRequest("queue",[])
@@ -145,28 +168,28 @@ func send(data,priority):
 	if typeof(checked) == TYPE_DICTIONARY: 
 		match priority:
 			1:
-				if send_queue.find(data) == -1:
+				if send_queue.find(str(data)) == -1:
 					if send_queue.size() >= 1:
 						send_queue.insert(0,data)
 					else:
 						send_queue.append(data)
 			2:
-				if send_queue.find(data) == -1:
+				if send_queue.find(str(data)) == -1:
 					if send_queue.size() >= 1:
 						send_queue.insert(1,data)
 					else:
 						send_queue.append(data)
 			3:
-				if send_queue.find(data) == -1:
+				if send_queue.find(str(data)) == -1:
 					if send_queue.size() >= 2:
 						send_queue.insert(2,data)
 					else:
 						send_queue.append(data)
 			6:
-				if send_queue.find(data) == -1:
+				if send_queue.find(str(data)) == -1:
 					send_queue.push_back(data)
 			_:
-				if send_queue.find(data) == -1:
+				if send_queue.find(str(data)) == -1:
 					send_queue.append(data)
 	else:
 		print("json error")
@@ -230,7 +253,7 @@ func openSeedRequest(type,data):
 			
 		"get_chat":
 			if data[0]:
-				send('{"act":"get_chat",'+appdefaults+',"token":"'+OpenSeed.token+'","room":"'+data[0]+'","last":"'+str(data[1])+'"}',1)
+				send('{"act":"get_chat",'+appdefaults+',"token":"'+OpenSeed.token+'","room":"'+data[0]+'","last":"'+str(data[1])+'"}',2)
 				
 		"getConversations":
 			send('{"act":"get_conversations",'+appdefaults+',"token":"'+OpenSeed.token+'"}',3)
@@ -249,7 +272,7 @@ func openSeedRequest(type,data):
 			send('{"act":"get_genres",'+appdefaults+'}',6)
 			
 		"get_genre":
-			send('{"act":"get_genre",'+appdefaults+',"genre":"'+data[0]+'","count":"0"}',6)
+			send('{"act":"get_genre",'+appdefaults+',"genre":"'+data[0]+'","count":"50"}',6)
 			
 		"get_new_tracks":
 			send('{"act":"get_new_tracks",'+appdefaults+'}',6)
@@ -285,18 +308,95 @@ func openSeedRequest(type,data):
 		"queue":
 			if mode == "socket":
 				if !thread.is_active():
-					thread.start(OpenSeed,"get_from_socket_threaded",[send_queue[0],"queued_event"])
+					#var msg = send_queue[0]
+					var msg = "msg="+appPub+"<::>"+simp_crypt(appId,send_queue[0])+"<::>"
+					thread.start(OpenSeed,"get_from_socket_threaded",[msg,"queued_event"])
 					
 			if mode == "web":
+				#var msg = "msg="+appPub+"<::>"+simp_crypt(appId,send_queue[0])+"<::>"
+				var msg = "msg="+appPub+"<::>"+send_queue[0]+"<::>"
+				#var msg = "msg="+send_queue[0]
+				var headers = []
+				#$HTTPRequest.connect("request_completed",self,"")
+				if waiting == false:
+					$HTTPRequest.request("http://api.openseed.solutions/",headers,false,HTTPClient.METHOD_POST,msg)
+					waiting = true
+				
+				#thread.start(OpenSeed,"get_from_socket_threaded",[msg,"queued_event"])
+				
 				pass
 			if mode == "websocket":
+				#var msg = "msg="+send_queue[0]
+				var msg = "msg="+appPub+"<::>"+simp_crypt(appId,send_queue[0])+"<::>"
+				get_from_websocket(msg)
 				pass
+				
+				
+func get_from_websocket(data):
+	#print("using websocket")
+	
+	if websocket.get_connection_status() == 0:
+		var err = websocket.connect_to_url("ws://"+openseed+":8765")
+		if err != OK:
+			print("Unable to connect")
+			set_process(false)
+		else:
+			#websocket.set_buffers()
+			websocket.get_peer(1).put_packet(data.to_utf8())
+			#return(websocket.get_peer(1).get_packet().get_string_from_utf8())
+	elif websocket.get_connection_status() == 2:
+		websocket.get_peer(1).put_packet(data.to_utf8())
+		#return(websocket.get_peer(1).get_packet().get_string_from_utf8())
+		
+	#print(data)
+	
+	var fullreturn = ""
+	var _timeout = 18000
+	
+	return fullreturn
+	
+func _closed(was_clean = false):
+	# was_clean will tell you if the disconnection was correctly notified
+	# by the remote peer before closing the socket.
+	print("Closed, clean: ", was_clean)
+	set_process(false)
+
+
+func _connected(proto = ""):
+	# This is called on connection, "proto" will be the selected WebSocket
+	# sub-protocol (which is optional)
+	print("Connected with protocol: ", proto)
+	# You MUST always use get_peer(1).put_packet to send data to server,
+	# and not put_packet directly when not using the MultiplayerAPI.
+	#websocket.get_peer(1).put_packet("Test packet".to_utf8())
+
+
+func _on_data():
+	# Print the received packet, you MUST always use get_peer(1).get_packet
+	# to receive data from server, and not get_packet directly when not
+	# using the MultiplayerAPI.
+	var returns = websocket.get_peer(1).get_packet().get_string_from_utf8()
+	var decrypt = simp_decrypt(appId,returns).strip_edges()
+	_on_OpenSeed_socket_returns(["queue",decrypt])
+	#print("Got data from server: "+returns) 
+
+
+func _process(_delta):
+	# Call this in _process or _physics_process. Data transfer, and signals
+	# emission will only happen when calling this function.
+	websocket.poll()
+
+
+func _exit_tree():
+	websocket.disconnect_from_host()
+	
 						
 func get_from_socket_threaded(data):
 # warning-ignore:unused_variable
 	var fullreturn = ""
 	var _timeout = 18000
-	var therest
+	var BUFF_SIZE = 4096
+	var therest = ""
 	if !threadedServer.is_connected_to_host(): 
 		threadedServer.connect_to_host(openseed, 8688)
 		while threadedServer.get_status() != 2:
@@ -305,24 +405,38 @@ func get_from_socket_threaded(data):
 		if threadedServer.get_status() == 2 :
 			threadedServer.put_data(data[0].to_utf8())
 			
-			var fromserver = threadedServer.get_data(1)
+			var fromserver = threadedServer.get_partial_data(BUFF_SIZE)
 			var size = threadedServer.get_available_bytes()
 			if size > 0:
-				therest = threadedServer.get_data(size)
-				fullreturn = fromserver[1].get_string_from_utf8() + therest[1].get_string_from_utf8()
+				if size < BUFF_SIZE:
+					therest = threadedServer.get_partial_data(size)[1].get_string_from_utf8()
+				else:
+					var whatsleft = size
+					while whatsleft > BUFF_SIZE:
+						therest += threadedServer.get_partial_data(BUFF_SIZE)[1].get_string_from_utf8()
+						whatsleft -= BUFF_SIZE
+					if whatsleft > 0:
+						therest += threadedServer.get_partial_data(whatsleft)[1].get_string_from_utf8()
+						
+				fullreturn = fromserver[1].get_string_from_utf8() + therest
 			else:
 				fullreturn = fromserver[1].get_string_from_utf8()
-		if len(fullreturn) >= 0:
+		#print(fullreturn)
+		var decrypt = simp_decrypt(appId,fullreturn).strip_edges()
+		#var decrypt = fullreturn
+		if len(decrypt) >= 0:
 			call_deferred("returned_from_socket",data[1])
-			
-		if fullreturn[-1] != "}":
-			var last_brach = fullreturn.find_last("}")
-			return fullreturn.substr(0,last_brach)
+		if decrypt[-1] != "}":
+			print("Incomplete return")
+			#print(decrypt)
+			return '{"server":"incomplete return error"}'
 		else:
-			return (fullreturn)
+			return (decrypt)
 		
 func returned_from_socket(type):
+	print(type)
 	var socket = thread.wait_to_finish()
+	
 	emit_signal("socket_returns",[type,socket])
 	
 func _on_OpenSeed_socket_returns(data):
@@ -330,31 +444,41 @@ func _on_OpenSeed_socket_returns(data):
 	if data[1]:
 		jsoned = parse_json(data[1])
 		if typeof(jsoned) == TYPE_DICTIONARY:
-			retried = 0
-			
 			if jsoned.has("profile"):
-				#print(jsoned["profile"])
+				if debug == true:
+					retried = 0
+					print("finished "+send_queue[0])
 				if OpenSeed.profile_name == "":
 					saveUserProfile(data[1])
 				else:
 					emit_signal("profiledata",[jsoned["profile"]["username"],jsoned["profile"]])
 			
 			if jsoned.has("account"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("accountdata",jsoned["account"])
 				
 			if jsoned.has("hive"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				if jsoned["hive"].has("profile"):
 					emit_signal("profiledata",[jsoned["username"],jsoned["hive"]])
 				if jsoned["hive"].has("app"):
 					emit_signal("profiledata",[jsoned["username"],jsoned["hive"]["app"]])
 					
 			if jsoned.has("history"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("historydata",jsoned["history"])
 					
-			if jsoned.has("chat_response"):
-				emit_signal("sent_chat",data[1])
 					
 			if jsoned.has("image"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("image_data",jsoned["image"])
 				add_to_image_store(jsoned["image"]["source"],jsoned["image"]["quality"],jsoned["image"]["hash"])
 					
@@ -365,19 +489,37 @@ func _on_OpenSeed_socket_returns(data):
 				########
 						
 			if jsoned.has("chat"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("chatdata",jsoned["chat"])
 						
 			if jsoned.has("chat_history"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("chat_history",jsoned["chat_history"])
+			
+			if jsoned.has("chat_response"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
+				emit_signal("sent_chat",data[1])
 						
 			if jsoned.has("conversations"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				if str(conversations) != str(jsoned["conversations"]):
 					emit_signal("new_chat")
 					conversations = jsoned["conversations"]
 					emit_signal("conversations",conversations)
 					
-			if jsoned.has("key"):
-				emit_signal("keydata",jsoned["key"])
+			if jsoned.has("lock"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
+				emit_signal("keydata",jsoned["lock"])
 						
 				########
 				#
@@ -386,15 +528,27 @@ func _on_OpenSeed_socket_returns(data):
 				########
 				
 			if jsoned.has("newtracks"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("new_tracks",jsoned["newtracks"])
 						
 			if jsoned.has("new_musicians"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("new_artists",jsoned["new_musicians"])
 					
 			if jsoned.has("genre_tracks"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("tracks",jsoned["genre_tracks"])
 					
 			if jsoned.has("genres"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("genres",jsoned["genres"])
 						
 				########
@@ -404,31 +558,40 @@ func _on_OpenSeed_socket_returns(data):
 				########
 				
 			if jsoned.has("status"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("user_status",[jsoned["status"]["data"]["chat"],jsoned["status"]["account"]])
 						
 			if jsoned.has("request"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("request_status",[jsoned["request"],jsoned["account"]])
 					
 			if jsoned.has("connections"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
 				emit_signal("connections",jsoned["connections"])
-			
-			if debug == true:
-				print("finished "+send_queue[0])
 				
-			send_queue.remove(0)
-			
-		else:
-			if retried == retry:
-				#print("retried:"+str(retried))
-				#print("removing bad call")
-				if parse_json(send_queue[0])["act"] != "get_key":
-					print(send_queue[0])
-					send_queue.remove(0)
-			else:
-				#if parse_json(send_queue[0])["act"] == "verify_account":
-				#	print(data[1])
-				#print(data[1])
+			if jsoned.has("server"):
 				retried += 1
+				print("error in " + send_queue[0])
+				if debug == true:
+					print("error in " + send_queue[0])
+					print(retried)
+			else:
+				if debug == true:
+					print("removing "+send_queue[0])
+				send_queue.remove(0)
+				
+		if retried >= retry:
+			retried = 0
+			if debug == true:
+				print("failed at "+send_queue[0])
+				print("got "+data[1])
+			send_queue.remove(0)
 				
 func _on_link_linked():
 	
@@ -612,7 +775,8 @@ func create_chatroom(title,attendees):
 func send_chat(message,room):
 	var command = '{"act":"send_chat","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
 					'","token":"'+OpenSeed.token+'","room":"'+str(room)+'","message":"'+message+'"}' 
-	send(command,1)
+	if send_queue.find(str(command)) == -1:
+		send(command,1)
 	return "queued"
 				
 
@@ -671,105 +835,158 @@ func get_keys_for(users,room):
 		appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
 		openSeedRequest("get_key",[users,room])
 	else:
-		emit_signal("keydata",{"code":key,"room":room})
+		emit_signal("keydata",{"key":key,"room":room})
 	return key
 
 func simp_crypt(key,raw_data):
-	key = key.replace("0","q")\
-			.replace("1","a").replace("2","b")\
-			.replace("3","c").replace("4","d")\
-			.replace("5","F").replace("6","A")\
-			.replace("7","Z").replace("8","Q")\
-			.replace("9","T").replace("#","G")\
-			.replace("!","B").replace(",","C")\
-			.replace(" ","!").replace("/","S")\
-			.replace("=","e").replace(":","c")\
-			.replace("\n","n")
+	
+	if debug == true:
+		#print("encrypting "+raw_data)
+		#print("using "+key)
+		pass
+		
+	var num_array = []
+	for c in key:
+		if int(c) and int(c) % 2 == 0:
+			num_array.append(c)
+			
+	while len(num_array) <= len(raw_data):
+		num_array += num_array		
+	num_array += num_array
+	
 	var secret = ""
 	var datanum = 0
 	var digits = ""
+	var key_digits = ""
 	var key_stretch = key
+	var keystring = "" 
 
 	#//lets turn it into integers first//
 	for t in raw_data.replace("%", ":percent:").replace("&", ":ampersand:"):
 		var c = t.ord_at(0)
 		digits += str(c)+" "
 		
-	var data = digits+str(str(" ").ord_at(0))
+	var data = digits
 	
 	if key_stretch != "":
-		if len(data) > len(key_stretch):
+		if len(data)> len(key_stretch):
 			while len(key_stretch) < len(data):
 				key_stretch = key_stretch + key
+				
+	key_stretch = key_stretch.substr(0,len(data))
 	
-	while datanum < len(data):
-		var keynum = 0
-		while keynum < len(key_stretch):
-			var salt = int(round(randf() * 40))
-			if keynum < len(data) and salt % 3 == 0 and datanum < len(data):
-				if data[datanum] == key_stretch[keynum]:
-					var num = keynum
-					while num < len(key_stretch) -1:
-						secret = secret + key_stretch[num]
-						num += 1
-						if data[datanum] != key_stretch[num]:
-							keynum = num
-							secret = secret+data[datanum]
-							break
-						else:
-							secret = secret + key_stretch[num]
+	data = data.split(" ")
+	
+	for b in key_stretch:
+		var i = b.ord_at(0)
+		key_digits += str(i)+" "
+	key_digits = key_digits.split(" ")	
+
+	var keynum = 0
+
+	for d in data:
+		if d:
+			if int(d) == int(key_digits[keynum]):
+				secret += char(int(d))
+			else:
+				var combine = 0
+				if int(num_array[keynum]) % 2 == 0:
+					combine = int(d) + int(key_digits[keynum])
 				else:
-					secret = secret+data[datanum]
-				datanum += 1
-			elif datanum < len(data):
-				secret = secret + key_stretch[keynum]
-				#if keynum < len(key_stretch) and key_stretch[keynum]:
-				#	secret = secret + key_stretch[keynum]
-				#else:
-				#	keynum = 0
-				#	secret = secret + key_stretch[keynum]
-			keynum += 1
-	return secret.replace(" ","zZz")
+					combine =int(d) * int(num_array[keynum]) 
+					
+				secret = secret + char(combine)
+		keynum += 1
+		
+	if debug == true:
+		#print("encrypted as "+secret.replace(" ","zZz"))
+		pass
+		
+	return secret.replace(" ","zZz").strip_edges()
 
 func simp_decrypt(key,raw_data):
-	key = key.replace("0","q")\
-			.replace("1","a").replace("2","b")\
-			.replace("3","c").replace("4","d")\
-			.replace("5","F").replace("6","A")\
-			.replace("7","Z").replace("8","Q")\
-			.replace("9","T").replace("#","G")\
-			.replace("!","B").replace(",","C")\
-			.replace(" ","!").replace("/","S")\
-			.replace("=","e").replace(":","c")\
-			.replace("\n","n")
+	
+	if debug == true:
+		#print("decrypting "+raw_data)
+		#print("using "+key)
+		pass
+		
+	if key == "":
+		print("no key")
+		return
+		
+	var num_array = []
+	for c in key:
+		if int(c) and int(c) % 2 == 0:
+			num_array.append(c)
 			
+	while len(num_array) <= len(raw_data):
+		num_array += num_array
+	num_array += num_array	
+	
+	if debug == true:
+		#print("num array: ",num_array)
+		pass
+		
 	var key_stretch = key
 	var message = ""
 	var datanum = 0
 	var decoded = ""
-
-	var data = raw_data.replace("zZz"," ")
+	var key_digits = ""
+	var digits = ""
+	
+	for t in raw_data.replace("zZz"," "):
+		var c = t.ord_at(0)
+		digits += str(c)+" "
+		
+	var data = digits
 	
 	if key_stretch != "":
-		if len(data) > len(key_stretch):
+		if len(data)> len(key_stretch):
 			while len(key_stretch) < len(data):
 				key_stretch = key_stretch + key
-
-		while datanum < len(data):
-			if key_stretch[datanum] != data[datanum]:
-				if data[datanum]:
-					message = message + data[datanum]
-				else:break
-			datanum = datanum + 1
-			
-		for c in message.split(" "):
-			if len(c) <= 4:
-				if int(c) < 255:
-					decoded += char(int(c))
+				
+	key_stretch = key_stretch.substr(0,len(data))
+	
+	if debug == true:
+		#print("Key stretched to "+ key_stretch)
+		pass
+		
+	data = data.split(" ")
+	
+	if debug == true:
+		#print("data in digits ",data)
+		pass
+	
+	for b in key_stretch:
+		var i = b.ord_at(0)
+		key_digits += str(i)+" "
+	
+	key_digits = key_digits.split(" ")
+	
+	if debug == true:
+		#print("key in digits ",key_digits)
+		pass
+	#message = raw_data
+	var keynum = 0
+	for d in data:
+		var test1 = 0
+		var test1a = 0
+		var test2 = 0
+		
+		if d:
+			if int(d) == int(key_digits[keynum]):
+				message += char(int(d))
+			else:
+				var combine = 0
+				if int(num_array[keynum]) % 2 == 0:
+					combine = int(d) - int(key_digits[keynum])
 				else:
-					decoded = "Unable to Decrypt"
-					
-	return decoded.replace(":percent:","%").replace(":ampersand:","&")
+					combine =int(d) / int(num_array[keynum]) 
+				message += char(combine)
+
+		keynum += 1
+	return message.strip_edges()
 	
 	
 ##########################################
@@ -980,7 +1197,10 @@ func send_file(category,file):
 
 # warning-ignore:unused_argument
 func _on_HTTPRequest_request_completed(_result, response_code, _headers, _body):
-	#if response_code == 200:
+	
+	if response_code == 200:
+		emit_signal("socket_returns",["queue",simp_decrypt(appId,_body.get_string_from_utf8())])
+		waiting = false
 		#emit_signal("imagestored")
 	pass # Replace with function body.
 

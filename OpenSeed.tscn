@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.gd" type="Script" id=1]
 [ext_resource path="res://OpenSeed-Godot/Comment.tscn" type="PackedScene" id=2]
@@ -7,14 +7,17 @@
 [ext_resource path="res://OpenSeed-Godot/hiveWallet.tscn" type="PackedScene" id=5]
 [ext_resource path="res://OpenSeed-Godot/Request.tscn" type="PackedScene" id=6]
 [ext_resource path="res://OpenSeed-Godot/HiveLogin.tscn" type="PackedScene" id=7]
+[ext_resource path="res://OpenSeed-Godot/ChatLog.tscn" type="PackedScene" id=8]
 [ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=11]
 [ext_resource path="res://ColorStyleGuide.png" type="Texture" id=12]
 
 [node name="OpenSeed" type="Node"]
 script = ExtResource( 1 )
+debug = false
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
+download_chunk_size = 65536
 use_threads = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -119,10 +122,23 @@ visible = false
 position = Vector2( 1784.27, 514.022 )
 texture = ExtResource( 12 )
 
+[node name="ChatLog" parent="CanvasLayer" instance=ExtResource( 8 )]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -450.0
+margin_top = -374.5
+margin_right = 450.0
+margin_bottom = 374.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource( 11 )
+
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.2
 [connection signal="conversations" from="." to="." method="_on_OpenSeed_conversations"]
 [connection signal="new_artists" from="." to="." method="_on_OpenSeed_new_artists"]
 [connection signal="new_tracks" from="." to="." method="_on_OpenSeed_new_tracks"]

@@ -1,0 +1,83 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://OpenSeed-Godot/ChatLog.gd" type="Script" id=1]
+[ext_resource path="res://Img/mail-send-symbolic.svg" type="Texture" id=2]
+[ext_resource path="res://Img/document-send-symbolic.svg" type="Texture" id=3]
+
+[node name="ChatLog" type="PanelContainer"]
+margin_right = 900.0
+margin_bottom = 630.0
+rect_min_size = Vector2( 0, 500 )
+rect_clip_content = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 14.0
+margin_top = 14.0
+margin_right = 886.0
+margin_bottom = 736.0
+rect_min_size = Vector2( 0, 500 )
+rect_clip_content = true
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+margin_right = 872.0
+margin_bottom = 25.0
+text = "Chat"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 33.0
+margin_right = 872.0
+margin_bottom = 41.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+margin_top = 49.0
+margin_right = 872.0
+margin_bottom = 669.0
+rect_min_size = Vector2( 850, 620 )
+scroll_horizontal_enabled = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+custom_constants/separation = 10
+
+[node name="InputArea" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 677.0
+margin_right = 872.0
+margin_bottom = 722.0
+custom_constants/separation = 10
+
+[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/InputArea"]
+margin_right = 36.0
+margin_bottom = 45.0
+rect_min_size = Vector2( 36, 36 )
+rect_pivot_offset = Vector2( 16.7976, 23.2531 )
+texture = ExtResource( 3 )
+expand = true
+stretch_mode = 6
+
+[node name="message" type="LineEdit" parent="VBoxContainer/InputArea"]
+margin_left = 46.0
+margin_right = 826.0
+margin_bottom = 45.0
+rect_min_size = Vector2( 780, 0 )
+rect_clip_content = true
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/InputArea"]
+margin_left = 836.0
+margin_right = 872.0
+margin_bottom = 45.0
+rect_min_size = Vector2( 36, 36 )
+rect_pivot_offset = Vector2( 16.7976, 23.2531 )
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 6
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
+[connection signal="change_user" from="." to="." method="_on_ChatLog_change_user"]
+[connection signal="scroll_ended" from="VBoxContainer/ScrollContainer" to="." method="_on_ScrollContainer_scroll_ended"]
+[connection signal="resized" from="VBoxContainer/ScrollContainer/VBoxContainer" to="." method="_on_VBoxContainer_resized"]
+[connection signal="text_entered" from="VBoxContainer/InputArea/message" to="." method="_on_message_text_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
