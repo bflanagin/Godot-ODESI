@@ -8,9 +8,9 @@
 [ext_resource path="res://OpenSeed-Godot/Request.tscn" type="PackedScene" id=6]
 [ext_resource path="res://OpenSeed-Godot/HiveLogin.tscn" type="PackedScene" id=7]
 [ext_resource path="res://OpenSeed-Godot/ChatLog.tscn" type="PackedScene" id=8]
+[ext_resource path="res://OpenSeed-Godot/Profile.tscn" type="PackedScene" id=9]
 [ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=11]
-[ext_resource path="res://ColorStyleGuide.png" type="Texture" id=12]
 
 [node name="OpenSeed" type="Node"]
 script = ExtResource( 1 )
@@ -117,11 +117,6 @@ margin_top = 44.0
 margin_right = 320.0
 margin_bottom = 69.0
 
-[node name="ColorStyleGuide" type="Sprite" parent="CanvasLayer"]
-visible = false
-position = Vector2( 1784.27, 514.022 )
-texture = ExtResource( 12 )
-
 [node name="ChatLog" parent="CanvasLayer" instance=ExtResource( 8 )]
 visible = false
 anchor_left = 0.5
@@ -134,7 +129,18 @@ margin_right = 450.0
 margin_bottom = 374.5
 grow_horizontal = 2
 grow_vertical = 2
+rect_clip_content = false
 theme = ExtResource( 11 )
+
+[node name="Profile" parent="CanvasLayer" instance=ExtResource( 9 )]
+visible = false
+
+[node name="Post" type="Control" parent="CanvasLayer"]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 

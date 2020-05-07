@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/ChatLog.gd" type="Script" id=1]
-[ext_resource path="res://Img/mail-send-symbolic.svg" type="Texture" id=2]
-[ext_resource path="res://Img/document-send-symbolic.svg" type="Texture" id=3]
+[ext_resource path="res://OpenSeed-Godot/mail-send-symbolic.svg" type="Texture" id=2]
+[ext_resource path="res://OpenSeed-Godot/document-send-symbolic.svg" type="Texture" id=3]
 
 [node name="ChatLog" type="PanelContainer"]
 margin_right = 900.0

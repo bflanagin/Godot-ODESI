@@ -36,12 +36,13 @@ func get_key():
 
 func _on_Timer_timeout():
 	if key != "" and key != "denied":
-		print("from timeout:updating")
+		#print("from timeout:updating")
 		if currentuser and OpenSeed.username != currentuser:
 			room = OpenSeed.find_by_attendees([currentuser,OpenSeed.username])
-			print("from timeout: "+room)
+		#	print("from timeout: "+room)
+			#print("from timeout: "+key)
 			if room != "" and history_retrieved == false :
-				print("getting history")
+				print("getting chat history")
 				OpenSeed.openSeedRequest("get_chat_history",[room,10,0])
 			else:
 				print("getting chat")

@@ -201,17 +201,17 @@ func openSeedRequest(type,data):
 		
 		# Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
 		"verify_account":
-			send('{"act":"account_check",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'"}',1)
+			send('{"act":"account_check",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'"}',2)
 			
 		# Creates user based on the provided information. This user is added to the Openseed service. 
 		"create_user":
-			send('{"act":"create_account",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'","email":"'+data[2]+'" }',1)
+			send('{"act":"create_account",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'","email":"'+data[2]+'" }',2)
 			
 		"loadUser":
 			loadUserData()
 			
 		"getProfile":
-			send('{"act":"get_profile",'+appdefaults+',"account":"'+data[0]+'"}',1)
+			send('{"act":"get_profile",'+appdefaults+',"account":"'+data[0]+'"}',2)
 			
 		"loadProfile":
 			loadUserProfile(data[0])
@@ -243,13 +243,13 @@ func openSeedRequest(type,data):
 				print("getting Requests")
 				
 		"get_key":
-			send('{"act":"get_key",'+appdefaults+',"thetype":"1","room":"'+data[1]+'","users":"'+data[0]+'","token":"'+OpenSeed.token+'"}',1)
+			send('{"act":"get_key",'+appdefaults+',"thetype":"1","room":"'+data[1]+'","users":"'+data[0]+'","token":"'+OpenSeed.token+'"}',2)
 			
 		"get_room_by_attendees":
-			send('{"act":"find_room_by_attendees",'+appdefaults+',"token":"'+OpenSeed.token+'","attendees":"'+str(data)+'","create":"1"}',1)
+			send('{"act":"find_room_by_attendees",'+appdefaults+',"token":"'+OpenSeed.token+'","attendees":"'+str(data)+'","create":"1"}',2)
 			
 		"get_chat_history":
-			send('{"act":"get_chat_history",'+appdefaults+',"token":"'+OpenSeed.token+'","room":"'+data[0]+'","count":"'+str(data[1])+'","last":"'+str(data[2])+'"}',1)
+			send('{"act":"get_chat_history",'+appdefaults+',"token":"'+OpenSeed.token+'","room":"'+data[0]+'","count":"'+str(data[1])+'","last":"'+str(data[2])+'"}',2)
 			
 		"get_chat":
 			if data[0]:
@@ -260,7 +260,7 @@ func openSeedRequest(type,data):
 			
 		"get_connections":
 			if data[0] != "":
-				send('{"act":"get_connections",'+appdefaults+',"account":"'+data[0]+'","hive":true}',1)
+				send('{"act":"get_connections",'+appdefaults+',"account":"'+data[0]+'","hive":false}',4)
 				
 		##################
 		#
@@ -339,10 +339,10 @@ func get_from_websocket(data):
 		var err = websocket.connect_to_url("ws://"+openseed+":8765")
 		if err != OK:
 			print("Unable to connect")
-			set_process(false)
-		else:
+			#set_process(false)
+		#else:
 			#websocket.set_buffers()
-			websocket.get_peer(1).put_packet(data.to_utf8())
+			#websocket.get_peer(1).put_packet(data.to_utf8())
 			#return(websocket.get_peer(1).get_packet().get_string_from_utf8())
 	elif websocket.get_connection_status() == 2:
 		websocket.get_peer(1).put_packet(data.to_utf8())
@@ -359,7 +359,7 @@ func _closed(was_clean = false):
 	# was_clean will tell you if the disconnection was correctly notified
 	# by the remote peer before closing the socket.
 	print("Closed, clean: ", was_clean)
-	set_process(false)
+	#set_process(false)
 
 
 func _connected(proto = ""):
@@ -378,7 +378,7 @@ func _on_data():
 	var returns = websocket.get_peer(1).get_packet().get_string_from_utf8()
 	var decrypt = simp_decrypt(appId,returns).strip_edges()
 	_on_OpenSeed_socket_returns(["queue",decrypt])
-	#print("Got data from server: "+returns) 
+	#print("Got data from server: "+decrypt) 
 
 
 func _process(_delta):
@@ -582,8 +582,8 @@ func _on_OpenSeed_socket_returns(data):
 					print("error in " + send_queue[0])
 					print(retried)
 			else:
-				if debug == true:
-					print("removing "+send_queue[0])
+				#if debug == true:
+					#print("removing "+send_queue[0])
 				send_queue.remove(0)
 				
 		if retried >= retry:
@@ -1192,8 +1192,8 @@ func send_file(category,file):
 			"User-Agent: Pirulo/1.0 (Godot)",
 			"Accept: */*"
 		]
-	var rest = '?category=image&file=/home/benjamin/Pictures/wood-toad.jpg'
-	$HTTPRequest.request("http://openseed.solutions:8689/upload"+rest,headers,false,HTTPClient.METHOD_POST)
+	var rest = '?category=image&file=@/home/benjamin/Pictures/wood-toad.jpg'
+	$HTTPRequest.request("http://openseed.solutions:8689/upload",headers,false,HTTPClient.METHOD_POST,rest)
 
 # warning-ignore:unused_argument
 func _on_HTTPRequest_request_completed(_result, response_code, _headers, _body):
