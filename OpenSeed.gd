@@ -334,6 +334,8 @@ func openSeedRequest(type,data):
 				
 func get_from_websocket(data):
 	#print("using websocket")
+	if websocket.get_connection_status() != 2:
+		print("Lost connection: ")
 	
 	if websocket.get_connection_status() == 0:
 		var err = websocket.connect_to_url("ws://"+openseed+":8765")
@@ -434,7 +436,7 @@ func get_from_socket_threaded(data):
 			return (decrypt)
 		
 func returned_from_socket(type):
-	print(type)
+	#print(type)
 	var socket = thread.wait_to_finish()
 	
 	emit_signal("socket_returns",[type,socket])
@@ -442,6 +444,7 @@ func returned_from_socket(type):
 func _on_OpenSeed_socket_returns(data):
 	var jsoned 
 	if data[1]:
+		
 		jsoned = parse_json(data[1])
 		if typeof(jsoned) == TYPE_DICTIONARY:
 			if jsoned.has("profile"):
@@ -577,6 +580,7 @@ func _on_OpenSeed_socket_returns(data):
 				
 			if jsoned.has("server"):
 				retried += 1
+				print(jsoned)
 				print("error in " + send_queue[0])
 				if debug == true:
 					print("error in " + send_queue[0])
@@ -585,8 +589,11 @@ func _on_OpenSeed_socket_returns(data):
 				#if debug == true:
 					#print("removing "+send_queue[0])
 				send_queue.remove(0)
-				
+		else: 
+			send_queue.remove(0)
+			
 		if retried >= retry:
+			
 			retried = 0
 			if debug == true:
 				print("failed at "+send_queue[0])

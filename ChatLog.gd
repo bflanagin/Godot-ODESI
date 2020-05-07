@@ -42,10 +42,10 @@ func _on_Timer_timeout():
 		#	print("from timeout: "+room)
 			#print("from timeout: "+key)
 			if room != "" and history_retrieved == false :
-				print("getting chat history")
+				#print("getting chat history")
 				OpenSeed.openSeedRequest("get_chat_history",[room,10,0])
 			else:
-				print("getting chat")
+				#print("getting chat")
 				OpenSeed.openSeedRequest("get_chat",[room,last])
 				
 
@@ -108,7 +108,7 @@ func fast_chat_update(data):
 	var dat = data
 	if typeof(dat) == TYPE_ARRAY:
 		for line in dat:
-			print(line)
+			#print(line)
 			update_chat(line)
 		history_retrieved = true
 	pass
