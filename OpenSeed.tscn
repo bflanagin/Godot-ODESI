@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.gd" type="Script" id=1]
 [ext_resource path="res://OpenSeed-Godot/Comment.tscn" type="PackedScene" id=2]
@@ -11,6 +11,8 @@
 [ext_resource path="res://OpenSeed-Godot/Profile.tscn" type="PackedScene" id=9]
 [ext_resource path="res://OpenSeed-Godot/NewAccount.tscn" type="PackedScene" id=10]
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=11]
+[ext_resource path="res://OpenSeed-Godot/LeaderBoard.tscn" type="PackedScene" id=12]
+[ext_resource path="res://OpenSeed-Godot/ScoreEntry.tscn" type="PackedScene" id=13]
 
 [node name="OpenSeed" type="Node"]
 script = ExtResource( 1 )
@@ -21,6 +23,9 @@ download_chunk_size = 65536
 use_threads = true
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="leaderboard" parent="CanvasLayer" instance=ExtResource( 12 )]
+visible = false
 
 [node name="HiveLink" parent="CanvasLayer" instance=ExtResource( 4 )]
 visible = false
@@ -136,11 +141,15 @@ theme = ExtResource( 11 )
 visible = false
 
 [node name="Post" type="Control" parent="CanvasLayer"]
+visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="ScoreEntry" parent="CanvasLayer" instance=ExtResource( 13 )]
+visible = false
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 

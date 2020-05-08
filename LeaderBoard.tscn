@@ -1,0 +1,156 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=1]
+[ext_resource path="res://OpenSeed-Godot/LeaderBoard.gd" type="Script" id=2]
+[ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=3]
+
+[node name="leaderboard" type="Panel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -152.0
+margin_top = -250.0
+margin_right = 152.0
+margin_bottom = 250.0
+rect_min_size = Vector2( 300, 500 )
+rect_clip_content = true
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="scoreC" type="Panel" parent="."]
+self_modulate = Color( 1, 1, 1, 0 )
+margin_left = 4.0
+margin_top = 34.601
+margin_right = 294.0
+margin_bottom = 51.601
+grow_horizontal = 2
+grow_vertical = 2
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Name" type="Label" parent="scoreC"]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -14.5
+margin_right = 56.0
+margin_bottom = 14.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "name"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Score" type="Label" parent="scoreC"]
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = -70.0
+margin_top = -14.5
+margin_bottom = 14.5
+grow_horizontal = 0
+grow_vertical = 0
+rect_clip_content = true
+text = "score"
+align = 2
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.01
+anchor_right = 0.5
+anchor_bottom = 0.03
+margin_left = -75.7015
+margin_top = -4.09402
+margin_right = 64.2985
+margin_bottom = 14.906
+grow_horizontal = 2
+grow_vertical = 2
+text = "high score"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator" type="HSeparator" parent="."]
+anchor_left = 0.1
+anchor_top = 0.06
+anchor_right = 0.9
+anchor_bottom = 0.06
+margin_left = -23.6579
+margin_top = 30.5903
+margin_right = 16.3421
+margin_bottom = 38.5903
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+anchor_left = 0.04
+anchor_top = 0.09
+anchor_right = 0.96
+anchor_bottom = 0.97
+margin_left = -7.16
+margin_top = 25.0
+margin_right = 3.16
+margin_bottom = -25.0
+grow_horizontal = 2
+grow_vertical = 2
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+margin_right = 278.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 278, 0 )
+rect_clip_content = true
+custom_constants/separation = 15
+alignment = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="break" type="Panel" parent="ScrollContainer/VBoxContainer"]
+margin_right = 278.0
+
+[node name="Sprite" type="Sprite" parent="."]
+self_modulate = Color( 1, 1, 1, 0.0901961 )
+position = Vector2( 271, 467.759 )
+scale = Vector2( 0.06516, 0.06516 )
+texture = ExtResource( 3 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Close_Button" type="Button" parent="."]
+anchor_left = 0.404605
+anchor_top = 0.90978
+anchor_right = 0.598684
+anchor_bottom = 0.98978
+rect_min_size = Vector2( 59, 0 )
+text = "close"
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": true
+}
+[connection signal="get_scores" from="." to="." method="_on_leaderboard_get_scores"]
+[connection signal="pressed" from="Close_Button" to="." method="_on_Close_Button_pressed"]

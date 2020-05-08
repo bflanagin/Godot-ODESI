@@ -1,0 +1,141 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=1]
+[ext_resource path="res://OpenSeed-Godot/ScoreEntry.gd" type="Script" id=2]
+[ext_resource path="res://OpenSeed-Godot/Fonts/NaviFont.tres" type="DynamicFont" id=3]
+[ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=4]
+[ext_resource path="res://Fonts/GameBig.tres" type="DynamicFont" id=5]
+[ext_resource path="res://Fonts/NaviFont.tres" type="DynamicFont" id=6]
+
+[node name="ScoreEntry" type="Panel"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -192.5
+margin_top = -236.5
+margin_right = 192.5
+margin_bottom = 236.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource( 1 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -58.7263
+margin_top = 10.0591
+margin_right = 60.2737
+margin_bottom = 43.0591
+grow_horizontal = 2
+grow_vertical = 2
+custom_fonts/font = ExtResource( 3 )
+text = "cleared"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Score" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -124.452
+margin_top = -102.819
+margin_right = 127.548
+margin_bottom = -31.8188
+grow_horizontal = 2
+grow_vertical = 2
+custom_fonts/font = ExtResource( 5 )
+text = "9999999"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="OpenSeed" type="Sprite" parent="."]
+self_modulate = Color( 1, 1, 1, 0.215686 )
+position = Vector2( 355.374, 441.881 )
+scale = Vector2( 0.0482262, 0.0482262 )
+texture = ExtResource( 4 )
+
+[node name="HSeparator" type="HSeparator" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -179.5
+margin_top = 54.0
+margin_right = 181.5
+margin_bottom = 64.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="HSeparator2" type="HSeparator" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -180.5
+margin_top = 110.0
+margin_right = 182.5
+margin_bottom = 120.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Mastery" type="HBoxContainer" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -172.5
+margin_top = 67.0
+margin_right = 180.5
+margin_bottom = 107.0
+alignment = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Player" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -77.0
+margin_top = -14.5
+margin_right = 77.0
+margin_bottom = 14.5
+grow_horizontal = 2
+grow_vertical = 2
+custom_fonts/font = ExtResource( 6 )
+text = "player name"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -31.0
+margin_top = -52.4835
+margin_right = 48.0
+margin_bottom = -12.4835
+text = "confirm"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="score" from="." to="." method="_on_ScoreEntry_score"]
+[connection signal="send_score" from="." to="." method="_on_ScoreEntry_send_score"]
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

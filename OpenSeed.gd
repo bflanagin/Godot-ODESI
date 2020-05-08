@@ -90,6 +90,8 @@ signal connections(data)
 signal user_status(data)
 signal request_status(data)
 signal ChatMessageRecieved(data)
+signal post(data)
+
 
 signal tracks(data)
 signal genres(data)
@@ -291,7 +293,7 @@ func openSeedRequest(type,data):
 			send('{"act":"get_hive_account",'+appdefaults+',"account":"'+data[0]+'"}',3)
 			
 		"get_hive_post":
-			send('{"act":"get_hive_post",'+appdefaults+',"author":"'+data[0]+'","permlink":"'+data[1]+'"}',4)
+			send('{"act":"get_hive_post",'+appdefaults+',"author":"'+data[0]+'","permlink":"'+data[1]+'"}',2)
 		
 		"set_hive_follow":
 			send('{"act":"follow",'+appdefaults+',"hiveaccount":"'+data[0]+'","follow":"'+data[1]+'"}',4)
@@ -451,8 +453,9 @@ func _on_OpenSeed_socket_returns(data):
 				if debug == true:
 					retried = 0
 					print("finished "+send_queue[0])
-				if OpenSeed.profile_name == "":
+				if OpenSeed.profile_name == "User":
 					saveUserProfile(data[1])
+					loadUserProfile(OpenSeed.username)
 				else:
 					emit_signal("profiledata",[jsoned["profile"]["username"],jsoned["profile"]])
 			
@@ -578,6 +581,18 @@ func _on_OpenSeed_socket_returns(data):
 					print("finished "+send_queue[0])
 				emit_signal("connections",jsoned["connections"])
 				
+				###################
+				#
+				# Hive
+				#
+				###################
+				
+				if jsoned.has("hive_post"):
+					retried = 0
+					if debug == true:
+						print("finished "+send_queue[0])
+					emit_signal("post",jsoned["hive_post"])
+					
 			if jsoned.has("server"):
 				retried += 1
 				print(jsoned)
@@ -590,6 +605,7 @@ func _on_OpenSeed_socket_returns(data):
 					#print("removing "+send_queue[0])
 				send_queue.remove(0)
 		else: 
+			print("not JSON "+data[1])
 			send_queue.remove(0)
 			
 		if retried >= retry:
@@ -701,15 +717,11 @@ func loadUserProfile(account):
 			emit_signal("userLoaded")
 		else:
 			print("no profile found")
-			if !thread.is_active():
-				openSeedRequest("getProfile",[account])
-				#emit_signal("socket_returns",["profile",profile])
+			openSeedRequest("getProfile",[account])
 		file.close()
 	else:
 		print("no profile found")
-		if !thread.is_active():
-			openSeedRequest("getProfile",[account])
-			#emit_signal("socket_returns",["profile",profile])
+		openSeedRequest("getProfile",[account])
 			
 	return profile_name
 	
@@ -869,7 +881,7 @@ func simp_crypt(key,raw_data):
 	var keystring = "" 
 
 	#//lets turn it into integers first//
-	for t in raw_data.replace("%", ":percent:").replace("&", ":ampersand:"):
+	for t in raw_data:
 		var c = t.ord_at(0)
 		digits += str(c)+" "
 		
