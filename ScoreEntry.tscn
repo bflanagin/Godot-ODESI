@@ -1,11 +1,10 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/openseed_theme.tres" type="Theme" id=1]
 [ext_resource path="res://OpenSeed-Godot/ScoreEntry.gd" type="Script" id=2]
-[ext_resource path="res://OpenSeed-Godot/Fonts/NaviFont.tres" type="DynamicFont" id=3]
 [ext_resource path="res://OpenSeed-Godot/OpenSeed.png" type="Texture" id=4]
-[ext_resource path="res://Fonts/GameBig.tres" type="DynamicFont" id=5]
-[ext_resource path="res://Fonts/NaviFont.tres" type="DynamicFont" id=6]
+[ext_resource path="res://OpenSeed-Godot/Fonts/GameBig.tres" type="DynamicFont" id=5]
+[ext_resource path="res://OpenSeed-Godot/Fonts/NaviFont.tres" type="DynamicFont" id=6]
 
 [node name="ScoreEntry" type="Panel"]
 anchor_left = 0.5
@@ -34,7 +33,7 @@ margin_right = 60.2737
 margin_bottom = 43.0591
 grow_horizontal = 2
 grow_vertical = 2
-custom_fonts/font = ExtResource( 3 )
+custom_fonts/font = ExtResource( 6 )
 text = "cleared"
 align = 1
 valign = 1
