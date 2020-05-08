@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://elements/MessageBox.gd" type="Script" id=1]
-[ext_resource path="res://elements/Contact.tscn" type="PackedScene" id=2]
+[ext_resource path="res://OpenSeed-Godot/MessageBox.gd" type="Script" id=1]
+[ext_resource path="res://OpenSeed-Godot/Contact.tscn" type="PackedScene" id=2]
 
 [node name="MessageBox" type="Panel"]
 margin_right = 840.0
@@ -28,20 +28,20 @@ margin_bottom = 73.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 margin_right = 761.0
-margin_bottom = 25.0
+margin_bottom = 14.0
 custom_constants/separation = 40
 
 [node name="name" type="Label" parent="VBoxContainer/HBoxContainer"]
 self_modulate = Color( 0.917647, 0.94902, 0.235294, 1 )
-margin_right = 119.0
-margin_bottom = 25.0
+margin_right = 70.0
+margin_bottom = 14.0
 text = "User name"
 
 [node name="date" type="Label" parent="VBoxContainer/HBoxContainer"]
 self_modulate = Color( 0.662745, 0.662745, 0.662745, 1 )
-margin_left = 159.0
-margin_right = 207.0
-margin_bottom = 25.0
+margin_left = 110.0
+margin_right = 138.0
+margin_bottom = 14.0
 text = "date"
 
 [node name="msg" type="Label" parent="."]
