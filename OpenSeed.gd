@@ -4,7 +4,7 @@ extends Node
 var thread = Thread.new()
 var imgfile = File.new()
 var Imagedata = Image.new()
-var noimage = preload("res://Img/folder-music-symbolic.svg")
+var noimage = preload("res://OpenSeed-Godot/folder-music-symbolic.svg")
 
 var username = ""
 # warning-ignore:unused_class_variable

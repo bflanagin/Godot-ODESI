@@ -1,5 +1,5 @@
 extends PanelContainer
-var chatmessage = preload("res://elements/MessageBox.tscn")
+var chatmessage = preload("res://OpenSeed-Godot/MessageBox.tscn")
 
 var box 
 var offset = 0
