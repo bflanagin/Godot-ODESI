@@ -1,0 +1,34 @@
+[remap]
+
+importer="texture"
+type="StreamTexture"
+path="res://.import/1F487-200D-2642-FE0F.svg-f169c68a01bf50b44027ee068061bccf.stex"
+metadata={
+"vram_texture": false
+}
+
+[deps]
+
+source_file="res://OpenSeed-Godot/openmoji/1F487-200D-2642-FE0F.svg"
+dest_files=[ "res://.import/1F487-200D-2642-FE0F.svg-f169c68a01bf50b44027ee068061bccf.stex" ]
+
+[params]
+
+compress/mode=0
+compress/lossy_quality=0.7
+compress/hdr_mode=0
+compress/bptc_ldr=0
+compress/normal_map=0
+flags/repeat=0
+flags/filter=true
+flags/mipmaps=false
+flags/anisotropic=false
+flags/srgb=2
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/HDR_as_SRGB=false
+process/invert_color=false
+stream=false
+size_limit=0
+detect_3d=true
+svg/scale=1.0

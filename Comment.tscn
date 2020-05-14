@@ -65,12 +65,26 @@ margin_bottom = 45.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 8.19
-margin_top = -49.19
-margin_right = -375.81
-margin_bottom = -7.19003
+margin_left = 8.0
+margin_top = -49.0
+margin_right = -108.0
+margin_bottom = -7.0
+rect_clip_content = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Contact" parent="Bottom" instance=ExtResource( 4 )]
+
+[node name="Label" type="Label" parent="Bottom"]
+margin_left = 50.0
+margin_top = 8.0
+margin_right = 500.0
+margin_bottom = 33.0
+grow_vertical = 2
+rect_min_size = Vector2( 450, 0 )
+valign = 3
+clip_text = true
 
 [node name="TextEdit" type="TextEdit" parent="."]
 anchor_right = 1.0
@@ -78,6 +92,10 @@ margin_left = 7.0
 margin_top = 40.0
 margin_right = -6.0
 margin_bottom = 244.0
+wrap_enabled = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Send" type="Button" parent="."]
 anchor_left = 1.0
@@ -89,6 +107,9 @@ margin_top = -44.0
 margin_right = -9.0
 margin_bottom = -7.0
 text = "Send"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Close" type="TextureButton" parent="."]
 margin_left = 7.8028
@@ -103,5 +124,6 @@ texture_disabled = ExtResource( 2 )
 texture_focused = ExtResource( 2 )
 expand = true
 stretch_mode = 5
+[connection signal="visibility_changed" from="." to="." method="_on_Comment_visibility_changed"]
 [connection signal="pressed" from="Send" to="." method="_on_Send_pressed"]
 [connection signal="pressed" from="Close" to="." method="_on_Close_pressed"]

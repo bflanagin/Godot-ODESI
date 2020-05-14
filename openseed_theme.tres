@@ -1,7 +1,8 @@
-[gd_resource type="Theme" load_steps=15 format=2]
+[gd_resource type="Theme" load_steps=16 format=2]
 
 [ext_resource path="res://OpenSeed-Godot/Fonts/titleFont.tres" type="DynamicFont" id=1]
 [ext_resource path="res://OpenSeed-Godot/Fonts/chandas1-2.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://OpenSeed-Godot/Fonts/subtitle.tres" type="DynamicFont" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.207843, 0.207843, 0.207843, 1 )
@@ -103,9 +104,9 @@ content_margin_right = 10.0
 content_margin_top = 10.0
 content_margin_bottom = 10.0
 bg_color = Color( 0.105882, 0.117647, 0.12549, 1 )
-border_width_bottom = 3
+border_width_bottom = 2
 border_color = Color( 0.423529, 0.419608, 0.545098, 1 )
-border_blend = true
+expand_margin_top = 8.0
 
 [sub_resource type="DynamicFont" id=12]
 use_mipmaps = true
@@ -411,7 +412,7 @@ TextEdit/colors/bookmark_color = Color( 0, 0, 0, 1 )
 TextEdit/colors/brace_mismatch_color = Color( 0, 0, 0, 1 )
 TextEdit/colors/breakpoint_color = Color( 0, 0, 0, 1 )
 TextEdit/colors/caret_background_color = Color( 0, 0, 0, 1 )
-TextEdit/colors/caret_color = Color( 0, 0, 0, 1 )
+TextEdit/colors/caret_color = Color( 1, 1, 1, 1 )
 TextEdit/colors/code_folding_color = Color( 0, 0, 0, 1 )
 TextEdit/colors/completion_background_color = Color( 0, 0, 0, 1 )
 TextEdit/colors/completion_existing_color = Color( 0, 0, 0, 1 )
@@ -435,8 +436,8 @@ TextEdit/colors/word_highlighted_color = Color( 0, 0, 0, 1 )
 TextEdit/constants/completion_lines = 7
 TextEdit/constants/completion_max_width = 50
 TextEdit/constants/completion_scroll_width = 3
-TextEdit/constants/line_spacing = 8
-TextEdit/fonts/font = null
+TextEdit/constants/line_spacing = 2
+TextEdit/fonts/font = ExtResource( 3 )
 TextEdit/icons/fold = null
 TextEdit/icons/folded = null
 TextEdit/icons/space = null

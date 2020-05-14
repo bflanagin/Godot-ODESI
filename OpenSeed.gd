@@ -73,9 +73,6 @@ signal interface(type,data)
 signal linked()
 signal userLoaded()
 
-# warning-ignore:unused_signal
-signal comment(info)
-
 signal socket_returns(data)
 
 signal accountdata(data)
@@ -91,7 +88,10 @@ signal user_status(data)
 signal request_status(data)
 signal ChatMessageRecieved(data)
 signal post(data)
+signal comment(data)
 
+signal creator_created(data)
+signal creatorData(data)
 
 signal tracks(data)
 signal genres(data)
@@ -194,6 +194,7 @@ func send(data,priority):
 				if send_queue.find(str(data)) == -1:
 					send_queue.append(data)
 	else:
+		print(data)
 		print("json error")
 	return 1
 
@@ -214,7 +215,16 @@ func openSeedRequest(type,data):
 			
 		"getProfile":
 			send('{"act":"get_profile",'+appdefaults+',"account":"'+data[0]+'"}',2)
+		
+		"setProfile":
+			send('{"act":"set_profile",'+appdefaults+',"token":"'+data[0]+',"openseed":'+data[1]+',"extended":'+
+			data[2]+',"appdata":'+data[3]+',"misc":"'+data[4]+'","imports":'+data[5]+',"type":"'+data[6]+'"}',2)
 			
+		"createCreator":
+			send('{"act":"create_creator_account",'+appdefaults+',"creatorName":"'+data[0]+'","contactName":"'+data[1]+'","contactEmail":"'+data[2]+'","openseed":"'+data[3]+'"}',3)
+		"getCreator":
+			send('{"act":"creator_check",'+appdefaults+',"name":"'+data[0]+'","token":"'+data[1]+'"}',3)
+		
 		"loadProfile":
 			loadUserProfile(data[0])
 			
@@ -293,19 +303,19 @@ func openSeedRequest(type,data):
 			send('{"act":"get_hive_account",'+appdefaults+',"account":"'+data[0]+'"}',3)
 			
 		"get_hive_post":
-			send('{"act":"get_hive_post",'+appdefaults+',"author":"'+data[0]+'","permlink":"'+data[1]+'"}',2)
+			send('{"act":"get_hive_post",'+appdefaults+',"author":"'+data[0]+'","permlink":"'+data[1]+'"}',3)
 		
 		"set_hive_follow":
-			send('{"act":"follow",'+appdefaults+',"hiveaccount":"'+data[0]+'","follow":"'+data[1]+'"}',4)
+			send('{"act":"follow",'+appdefaults+',"token":"'+data[0]+'","follow":"'+data[1]+'"}',4)
 			
 		"send_hive_tokens":
-			send('{"act":"payment",'+appdefaults+',"hiveaccount":"'+data[0]+'","amount":"'+data[1]+'","to":"'+data[2]+'","for":"'+data[3]+'"}',4)
+			send('{"act":"payment",'+appdefaults+',"token":"'+data[0]+'","amount":"'+data[1]+'","to":"'+data[2]+'","for":"'+data[3]+'"}',4)
 			
 		"send_hive_like":
-			send('{"act":"like",'+appdefaults+',"hiveaccount":"'+data[0]+'","post":"'+data[1]+'"}',2)
-			
+			send('{"act":"like_hive_post",'+appdefaults+',"token":"'+data[0]+'","author":"'+data[1]+'","post":"'+data[2]+'","percent":100}',2)
+		
 		"send_hive_comment":
-			send('{"act":"comment",'+appdefaults+',"account":"'+data[0]+'","comment":"'+data[1]+'","post":"'+data[2]+'"}',2)
+			send('{"act":"post_hive_comment",'+appdefaults+',"token":"'+data[0]+'","author":"'+data[1]+'","post":"'+data[2]+'","comment":"'+data[3]+'"}',2)
 			
 		"queue":
 			if mode == "socket":
@@ -446,9 +456,10 @@ func returned_from_socket(type):
 func _on_OpenSeed_socket_returns(data):
 	var jsoned 
 	if data[1]:
-		
+
 		jsoned = parse_json(data[1])
 		if typeof(jsoned) == TYPE_DICTIONARY:
+			
 			if jsoned.has("profile"):
 				if debug == true:
 					retried = 0
@@ -464,6 +475,18 @@ func _on_OpenSeed_socket_returns(data):
 				if debug == true:
 					print("finished "+send_queue[0])
 				emit_signal("accountdata",jsoned["account"])
+				
+			if jsoned.has("creator_account"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
+				emit_signal("creator_created",jsoned["creator_account"])
+			
+			if jsoned.has("creator_info"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
+				emit_signal("creatorData",jsoned["creator_info"])
 				
 			if jsoned.has("hive"):
 				retried = 0
@@ -587,11 +610,23 @@ func _on_OpenSeed_socket_returns(data):
 				#
 				###################
 				
-				if jsoned.has("hive_post"):
-					retried = 0
-					if debug == true:
-						print("finished "+send_queue[0])
-					emit_signal("post",jsoned["hive_post"])
+			if jsoned.has("hive_post"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
+					print(jsoned["hive_post"])
+				emit_signal("post",jsoned["hive_post"])
+				
+			if jsoned.has("liked_hive_post"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
+
+			if jsoned.has("hive_comment"):
+				retried = 0
+				if debug == true:
+					print("finished "+send_queue[0])
+				emit_signal("comment",jsoned["hive_comment"])
 					
 			if jsoned.has("server"):
 				retried += 1
@@ -1016,6 +1051,14 @@ func simp_decrypt(key,raw_data):
 
 func interface(type,show,data):
 	match type :
+		"comment":
+			$CanvasLayer/Comment.data = data
+			$CanvasLayer/Comment.visible = show
+			
+			$CanvasLayer/Request.visible = false
+			$CanvasLayer/HiveLink.visible = false
+			$CanvasLayer/Login.visible = false
+			$CanvasLayer/NewAccount.visible = false
 		"login":
 			$CanvasLayer/Login.visible = show
 			
@@ -1023,7 +1066,7 @@ func interface(type,show,data):
 			$CanvasLayer/Request.visible = false
 			#$link.visible = false
 		"hive":
-			$CanvasLayer/SteemLink.visible = show
+			$CanvasLayer/HiveLink.visible = show
 			
 			$CanvasLayer/Request.visible = false
 			$CanvasLayer/Login.visible = false
@@ -1031,12 +1074,12 @@ func interface(type,show,data):
 		"request":
 			$CanvasLayer/Request.visible = show
 			$CanvasLayer/Request.load_account(data)
-			$CanvasLayer/SteemLink.visible = false
+			$CanvasLayer/HiveLink.visible = false
 			$CanvasLayer/Login.visible = false
 			$CanvasLayer/NewAccount.visible = false
 		_:
 			$CanvasLayer/Request.visible = false
-			$CanvasLayer/SteemLink.visible = false
+			$CanvasLayer/HiveLink.visible = false
 			$CanvasLayer/Login.visible = false
 			$CanvasLayer/NewAccount.visible = false
 	
