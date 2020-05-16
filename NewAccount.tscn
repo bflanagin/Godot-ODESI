@@ -71,9 +71,9 @@ anchor_top = 0.54
 anchor_right = 0.9
 anchor_bottom = 0.59
 margin_left = 1.2
-margin_top = -43.444
-margin_right = 0.799988
-margin_bottom = -20.944
+margin_top = -43.28
+margin_right = 0.800049
+margin_bottom = -29.88
 grow_horizontal = 2
 grow_vertical = 2
 max_length = 255
@@ -89,15 +89,14 @@ anchor_top = 0.65
 anchor_right = 0.9
 anchor_bottom = 0.65
 margin_left = 1.20001
-margin_top = -25.7719
+margin_top = -36.269
 margin_right = 1.20001
-margin_bottom = 19.2281
+margin_bottom = 8.73096
 grow_horizontal = 2
 grow_vertical = 2
 max_length = 255
 placeholder_text = "Email"
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 

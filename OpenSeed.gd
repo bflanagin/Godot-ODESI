@@ -85,11 +85,15 @@ signal keydata(data)
 signal conversations(data)
 signal connections(data)
 signal user_status(data)
+
 signal request_status(data)
+signal request_update(data)
+
 signal ChatMessageRecieved(data)
 signal post(data)
 signal comment(data)
 
+signal account_created(data)
 signal creator_created(data)
 signal creatorData(data)
 
@@ -201,13 +205,12 @@ func send(data,priority):
 func openSeedRequest(type,data):
 	appdefaults = '"appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+'"'
 	match type:
-		
 		# Verifies the login creditials of an account on Openseed and reports back pass/fail/nouser.
 		"verify_account":
 			send('{"act":"account_check",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'"}',2)
 			
 		# Creates user based on the provided information. This user is added to the Openseed service. 
-		"create_user":
+		"create_account":
 			send('{"act":"create_account",'+appdefaults+',"account":"'+data[0]+'","passphrase":"'+data[1]+'","email":"'+data[2]+'" }',2)
 			
 		"loadUser":
@@ -233,7 +236,8 @@ func openSeedRequest(type,data):
 				send('{"act":"get_history",'+appdefaults+',"account":"'+data[0]+'","apprange":"'+data[1]+'","count":"'+data[2]+'"}',3)
 				
 		"get_image":
-			send('{'+appdefaults+',"act":"get_image","image":"'+data[0]+'","thetype":"url","quality":"'+data[1]+'"}',3)
+			if data:
+				send('{"act":"get_image",'+appdefaults+',"image":"'+data[0]+'","thetype":"url","quality":"'+data[1]+'"}',2)
 			
 				
 		"updateStatus":
@@ -242,7 +246,7 @@ func openSeedRequest(type,data):
 				
 		"getStatus":
 			if OpenSeed.token != "" and data[0] != "":
-				send('{"act":"get_status",'+appdefaults+',"account":"'+data[0]+'"}',6)
+				send('{"act":"get_status",'+appdefaults+',"account":"'+data[0]+'"}',2)
 				
 		###################
 		#
@@ -268,11 +272,11 @@ func openSeedRequest(type,data):
 				send('{"act":"get_chat",'+appdefaults+',"token":"'+OpenSeed.token+'","room":"'+data[0]+'","last":"'+str(data[1])+'"}',2)
 				
 		"getConversations":
-			send('{"act":"get_conversations",'+appdefaults+',"token":"'+OpenSeed.token+'"}',3)
+			send('{"act":"get_conversations",'+appdefaults+',"token":"'+OpenSeed.token+'"}',2)
 			
 		"get_connections":
 			if data[0] != "":
-				send('{"act":"get_connections",'+appdefaults+',"account":"'+data[0]+'","hive":false}',4)
+				send('{"act":"get_connections",'+appdefaults+',"account":"'+data[0]+'","hive":false}',2)
 				
 		##################
 		#
@@ -291,6 +295,9 @@ func openSeedRequest(type,data):
 			
 		"get_new_musicians":
 			send('{"act":"get_new_musicians",'+appdefaults+'}',6)
+		
+		"muscian_search":
+			send('{"act":"artist_search",'+appdefaults+',"author":"'+data[0]+'"}',3)
 			
 		
 		####################
@@ -300,10 +307,10 @@ func openSeedRequest(type,data):
 		####################
 		
 		"get_hive_account":
-			send('{"act":"get_hive_account",'+appdefaults+',"account":"'+data[0]+'"}',3)
+			send('{"act":"get_hive_account",'+appdefaults+',"account":"'+data[0]+'"}',2)
 			
 		"get_hive_post":
-			send('{"act":"get_hive_post",'+appdefaults+',"author":"'+data[0]+'","permlink":"'+data[1]+'"}',3)
+			send('{"act":"get_hive_post",'+appdefaults+',"author":"'+data[0]+'","permlink":"'+data[1]+'"}',2)
 		
 		"set_hive_follow":
 			send('{"act":"follow",'+appdefaults+',"token":"'+data[0]+'","follow":"'+data[1]+'"}',4)
@@ -456,7 +463,6 @@ func returned_from_socket(type):
 func _on_OpenSeed_socket_returns(data):
 	var jsoned 
 	if data[1]:
-
 		jsoned = parse_json(data[1])
 		if typeof(jsoned) == TYPE_DICTIONARY:
 			
@@ -468,7 +474,8 @@ func _on_OpenSeed_socket_returns(data):
 					saveUserProfile(data[1])
 					loadUserProfile(OpenSeed.username)
 				else:
-					emit_signal("profiledata",[jsoned["profile"]["username"],jsoned["profile"]])
+					if jsoned["profile"].has("username"):
+						emit_signal("profiledata",[jsoned["profile"]["username"],jsoned["profile"]])
 			
 			if jsoned.has("account"):
 				retried = 0
@@ -588,16 +595,26 @@ func _on_OpenSeed_socket_returns(data):
 				
 			if jsoned.has("status"):
 				retried = 0
+				#print(jsoned)
 				if debug == true:
 					print("finished "+send_queue[0])
 				emit_signal("user_status",[jsoned["status"]["data"]["chat"],jsoned["status"]["account"]])
 						
 			if jsoned.has("request"):
 				retried = 0
+			#	print(jsoned)
 				if debug == true:
 					print("finished "+send_queue[0])
-				emit_signal("request_status",[jsoned["request"],jsoned["account"]])
-					
+					emit_signal("request_status",[jsoned["request"],jsoned["account"]])
+			
+			if jsoned.has("request_status"):
+				retried = 0
+			#	print(jsoned)
+				if debug == true:
+					print("finished "+send_queue[0])
+					emit_signal("request_update",jsoned["request_status"])
+			
+			
 			if jsoned.has("connections"):
 				retried = 0
 				if debug == true:
@@ -851,7 +868,7 @@ func set_request(account,response):
 	var command = '{"act":"set_request","appPub":"'+ \
 					str(appPub)+'","devPub":"'+str(devPub)+ \
 					'","token":"'+OpenSeed.token+'","account":"'+account+'","response":"'+response+'"}'
-	send(command,1)
+	send(command,2)
 
 func get_request_status(account):
 	var command = '{"act":"get_request_status","appPub":"'+str(appPub)+'","devPub":"'+str(devPub)+ \
@@ -1175,7 +1192,7 @@ func get_timage(url,port,thefile):
 		http.connect("request_completed",self,"image_download_complete")
 		
 func image_download_complete(result, response_code, headers, body):
-	print("image file downloaded")
+	#print("image file downloaded")
 	pass
 		
 ####################################

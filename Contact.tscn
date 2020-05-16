@@ -21,7 +21,6 @@ __meta__ = {
 }
 
 [node name="cImage" type="TextureRect" parent="."]
-visible = false
 show_behind_parent = true
 material = SubResource( 1 )
 anchor_right = 1.0
@@ -46,7 +45,4 @@ stretch_mode = 5
 __meta__ = {
 "_edit_use_anchors_": true
 }
-
-[node name="HTTPRequest" type="HTTPRequest" parent="."]
-use_threads = true
 [connection signal="refresh" from="." to="." method="_on_Contact_refresh"]

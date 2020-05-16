@@ -32,5 +32,4 @@ func _on_Reject_pressed():
 	OpenSeed.set_request(user,"denied")
 	hide()
 
-	
 
